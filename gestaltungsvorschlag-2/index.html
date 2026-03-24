@@ -782,6 +782,43 @@
     .fb-btn.active-pos { color: var(--green); background: var(--green-soft); }
     .fb-btn.active-neg { color: var(--red);   background: var(--red-soft); }
     .fb-btn:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+    .fb-btn-text {
+      padding: 4px 8px;
+      border-radius: var(--r-sm);
+      display: flex; align-items: center; gap: 4px;
+      font-size: 12px;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: background 150ms, color 150ms;
+      white-space: nowrap;
+    }
+    .fb-btn-text:hover { background: var(--surface-2); color: var(--text); }
+    .fb-btn-text:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+    .msg-action-btn {
+      width: 26px; height: 26px;
+      border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      opacity: 0;
+      transition: opacity 150ms, background 150ms, color 150ms;
+      flex-shrink: 0;
+    }
+    .msg-ai:hover .msg-action-btn,
+    .msg-user:hover .msg-action-btn { opacity: 1; }
+    .msg-action-btn:hover { background: var(--surface-2); color: var(--navy); }
+    .msg-action-btn:focus-visible { opacity: 1; outline: 2px solid var(--navy); outline-offset: 2px; }
+    .user-msg-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 2px;
+      padding-right: 4px;
+      height: 20px;
+    }
     .fb-divider { width: 1px; height: 16px; background: var(--border); margin: 0 4px; }
     .reflect-trigger {
       margin-left: auto;
@@ -1401,7 +1438,7 @@
           <aside class="ai-disclosure" role="note" aria-label="Hinweis: KI-System">
             <svg class="ai-disclosure-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
             <span class="ai-disclosure-text" id="ai-disclosure-text-1">
-              <strong>KI-Assistent (EU AI Act Art. 50)</strong> · Keine menschliche Beratung · Quellenangaben bei jeder Antwort · Gesprächsdaten werden pseudonymisiert und max. 72 h zur Qualitätssicherung gespeichert.
+              <strong>KI-Assistent (EU AI Act Art. 50)</strong> · Antworten können fehlerhaft sein · Kein Ersatz für Fachberatung · Gesprächsdaten werden pseudonymisiert und max. 72 h zur Qualitätssicherung gespeichert.
             </span>
           </aside>
 
@@ -1545,7 +1582,7 @@
           <aside class="ai-disclosure" role="note" aria-label="KI-System-Hinweis">
             <svg class="ai-disclosure-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
             <span class="ai-disclosure-text" id="ai-disclosure-text-2">
-              <strong>KI-Assistent</strong> · Antworten können fehlerhaft sein. Quellen werden angegeben.
+              <strong>KI-Assistent</strong> · Antworten können fehlerhaft sein (EU AI Act Art. 50).
             </span>
           </aside>
 
@@ -1573,6 +1610,11 @@
                 </div>
                 <div class="bubble-meta" aria-label="Gesendet um 10:41 Uhr">10:41</div>
               </div>
+            </div>
+            <div class="user-msg-actions">
+              <button class="msg-action-btn" aria-label="Nachricht bearbeiten" title="Bearbeiten">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
             </div>
 
             <!-- AI response: RAG — data-ai-generated (EU AI Act, WCAG fix) -->
@@ -1640,6 +1682,10 @@
                   <button class="reflect-trigger" aria-label="Reflexionsfrage anzeigen">
                     💡 Reflektieren
                   </button>
+                  <div class="fb-divider" aria-hidden="true"></div>
+                  <button class="msg-action-btn" aria-label="Antwort neu generieren" title="Neu generieren">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.63"/></svg>
+                  </button>
                 </div>
               </article>
             </div>
@@ -1650,6 +1696,11 @@
                 <div class="bubble-user">Gibt es auch passende Qualifizierungsmaßnahmen dazu?</div>
                 <div class="bubble-meta" aria-label="Gesendet um 10:42 Uhr">10:42</div>
               </div>
+            </div>
+            <div class="user-msg-actions">
+              <button class="msg-action-btn" aria-label="Nachricht bearbeiten" title="Bearbeiten">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
             </div>
 
             <!-- AI response: Navigation type -->
@@ -1691,6 +1742,10 @@
                   <span class="feedback-label" id="fb-label-2">Hilfreich?</span>
                   <button class="fb-btn active-pos" aria-pressed="true" aria-labelledby="fb-label-2" aria-label="Als hilfreich markiert">👍</button>
                   <button class="fb-btn" aria-pressed="false" aria-labelledby="fb-label-2" aria-label="Als nicht hilfreich markieren">👎</button>
+                  <div class="fb-divider" aria-hidden="true"></div>
+                  <button class="msg-action-btn" aria-label="Antwort neu generieren" title="Neu generieren">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.63"/></svg>
+                  </button>
                 </div>
               </article>
             </div>
@@ -1864,7 +1919,7 @@
                   </div>
                   <div class="feedback-bar" style="padding:4px 12px 8px;">
                     <button class="fb-btn" aria-label="Andere Reflexionsfrage anzeigen">🔄</button>
-                    <button class="fb-btn" style="font-size:12px;color:var(--muted);" aria-label="Reflexion beenden">✕ Beenden</button>
+                    <button class="fb-btn-text" aria-label="Reflexion beenden">✕ Beenden</button>
                   </div>
                 </article>
               </div>
@@ -1946,7 +2001,7 @@
           <aside class="ai-disclosure">
             <svg class="ai-disclosure-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
             <span class="ai-disclosure-text" style="font-size:10.5px;">
-              <strong>KI-Assistent</strong> · Quellenangaben bei jeder Antwort.
+              <strong>KI-Assistent</strong> · Antworten können fehlerhaft sein (EU AI Act Art. 50).
             </span>
           </aside>
 
