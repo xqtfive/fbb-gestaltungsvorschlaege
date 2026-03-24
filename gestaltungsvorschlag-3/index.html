@@ -961,7 +961,7 @@
     }
 
     /* ============================================================
-       MOBILE TAB
+       MOBIL TAB
     ============================================================ */
     .phone-stage {
       display: flex;
@@ -969,7 +969,7 @@
       padding: 0;
     }
 
-    .mobile-device {
+    .mobil-device {
       width: 375px;
       max-width: 100%;
       margin: 0 auto;
@@ -978,31 +978,31 @@
       overflow: hidden;
       background: var(--white);
     }
-    .mobile-notch {
+    .mobil-notch {
       background: var(--navy-deep);
       height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    .mobile-notch-bar {
+    .mobil-notch-bar {
       width: 100px; height: 6px;
       background: rgba(255,255,255,.25);
       border-radius: 3px;
     }
-    .mobile-widget {
+    .mobil-widget {
       height: 620px;
       display: flex;
       flex-direction: column;
     }
-    .mobile-home-bar {
+    .mobil-home-bar {
       background: var(--white);
       height: 22px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    .mobile-home-pill {
+    .mobil-home-pill {
       width: 100px; height: 4px;
       background: var(--border);
       border-radius: 2px;
@@ -1592,10 +1592,10 @@
       <button
         class="tab-btn"
         role="tab"
-        id="tab-mobile"
+        id="tab-mobil"
         aria-selected="false"
-        aria-controls="panel-mobile"
-        onclick="showTab('mobile')"
+        aria-controls="panel-mobil"
+        onclick="showTab('mobil')"
       >
         <span class="tab-btn-icon" aria-hidden="true">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -1673,7 +1673,7 @@
 
               <!-- Sub text + disclosure -->
               <p class="w-sub-text">
-                Ich bin ein KI-Assistent — meine Antworten können Fehler enthalten. Wählen Sie Ihre Rolle oder tippen Sie direkt los.
+                Wählen Sie Ihre Rolle oder tippen Sie direkt los.
               </p>
 
               <!-- AI Disclosure -->
@@ -2234,27 +2234,27 @@
       </section>
 
       <!-- ============================================================
-           TAB 4 – MOBILE
+           TAB 4 – MOBIL
       ============================================================ -->
       <section
         class="tab-panel"
-        id="panel-mobile"
+        id="panel-mobil"
         role="tabpanel"
-        aria-labelledby="tab-mobile"
+        aria-labelledby="tab-mobil"
       >
         <div class="section-header">
-          <h2>Mobile-Ansicht</h2>
+          <h2>Mobil-Ansicht</h2>
           <p>Widget im 375px-Smartphone-Kontext</p>
         </div>
 
         <div class="phone-stage">
-          <div class="mobile-device" role="img" aria-label="Smartphone-Vorschau des Chat-Widgets">
-            <div class="mobile-notch">
-              <div class="mobile-notch-bar"></div>
+          <div class="mobil-device" role="img" aria-label="Smartphone-Vorschau des Chat-Widgets">
+            <div class="mobil-notch">
+              <div class="mobil-notch-bar"></div>
             </div>
 
-            <div class="mobile-widget" style="display:flex;flex-direction:column;">
-              <!-- Full-screen widget on mobile -->
+            <div class="mobil-widget" style="display:flex;flex-direction:column;">
+              <!-- Full-screen widget on mobil -->
               <div class="w-head">
                 <div class="w-head-left">
                   <div class="w-head-dot" aria-hidden="true"></div>
@@ -2315,10 +2315,10 @@
               </div>
             </div>
 
-            <div class="mobile-home-bar">
-              <div class="mobile-home-pill"></div>
+            <div class="mobil-home-bar">
+              <div class="mobil-home-pill"></div>
             </div>
-          </div><!-- /.mobile-device -->
+          </div><!-- /.mobil-device -->
         </div><!-- /.phone-stage -->
 
         <!-- FAB state explanation -->
