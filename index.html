@@ -3,55 +3,247 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FBB – Gestaltungsvorschläge</title>
+  <title>Chat-Widget · Gestaltungsvorschläge · jetzt-transformieren.de</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: system-ui, sans-serif; background: #f5f5f3; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
-    .container { max-width: 520px; width: 100%; }
-    .eyebrow { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; }
-    h1 { font-size: 22px; font-weight: 500; color: #111; margin-bottom: 0.4rem; }
-    .sub { font-size: 14px; color: #666; margin-bottom: 2rem; line-height: 1.6; }
-    .list { display: flex; flex-direction: column; gap: 12px; }
-    .card { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; background: #fff; border: 1px solid #e5e5e3; border-radius: 12px; text-decoration: none; color: inherit; transition: border-color 0.15s, box-shadow 0.15s; }
-    .card:hover { border-color: #aaa; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-    .card-left { display: flex; align-items: center; gap: 14px; }
-    .badge { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; flex-shrink: 0; }
-    .b1 { background: #E6F1FB; color: #0C447C; }
-    .b2 { background: #E1F5EE; color: #085041; }
-    .b3 { background: #FAECE7; color: #712B13; }
-    .card-title { font-size: 15px; font-weight: 500; color: #111; }
-    .card-sub { font-size: 13px; color: #666; margin-top: 2px; }
-    .arrow { color: #bbb; }
-    .footer { text-align: center; margin-top: 2rem; font-size: 12px; color: #aaa; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:      #245883;
+      --navy-dark: #1a3e5e;
+      --navy-deep: #0f2536;
+      --blue:      #009ee0;
+      --orange:    #ff6600;
+      --white:     #ffffff;
+      --bg:        #f0f5fa;
+      --border:    #d0dce8;
+      --muted:     #6b8299;
+      --text:      #0f2536;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--navy-deep);
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header-dot {
+      width: 28px;
+      height: 28px;
+      background: var(--orange);
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+    .header-wordmark {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--white);
+      letter-spacing: -.2px;
+    }
+    .header-sep { width: 1px; height: 18px; background: rgba(255,255,255,.15); margin: 0 6px; }
+    .header-sub { font-size: 12.5px; color: rgba(255,255,255,.5); }
+    .header-badge {
+      margin-left: auto;
+      background: rgba(255,102,0,.15);
+      border: 1px solid rgba(255,102,0,.3);
+      color: #ffb380;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      letter-spacing: .3px;
+    }
+
+    /* ── Main ── */
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1.5rem;
+    }
+    .container { max-width: 560px; width: 100%; }
+
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--blue);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: .5rem;
+    }
+    h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--navy-deep);
+      letter-spacing: -.3px;
+      line-height: 1.2;
+      margin-bottom: .4rem;
+    }
+    .sub {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 2rem;
+    }
+
+    .list { display: flex; flex-direction: column; gap: 10px; }
+
+    .card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.25rem;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color .15s, box-shadow .15s, transform .15s;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      width: 3px;
+    }
+    .card-1::before { background: #009ee0; }
+    .card-2::before { background: #245883; }
+    .card-3::before { background: #ff6600; }
+    .card:hover {
+      border-color: #b0c8dc;
+      box-shadow: 0 4px 16px rgba(15,37,54,.08);
+      transform: translateY(-1px);
+    }
+    .card-left { display: flex; align-items: center; gap: 14px; padding-left: 6px; }
+    .badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 700;
+      flex-shrink: 0;
+      font-variant-numeric: tabular-nums;
+    }
+    .b1 { background: #ddf1fa; color: #0a6490; }
+    .b2 { background: #dde8f2; color: #1a3e5e; }
+    .b3 { background: #fde8d9; color: #b04500; }
+
+    .card-title { font-size: 15px; font-weight: 600; color: var(--navy-deep); }
+    .card-desc  { font-size: 12.5px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+    .card-tag {
+      display: inline-block;
+      margin-top: 5px;
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 9999px;
+      letter-spacing: .03em;
+    }
+    .tag-1 { background: #e0f4fc; color: #0a6490; }
+    .tag-2 { background: #e2eef7; color: #1a3e5e; }
+    .tag-3 { background: #fde8d9; color: #b04500; }
+
+    .arrow {
+      color: var(--border);
+      flex-shrink: 0;
+      transition: color .15s, transform .15s;
+    }
+    .card:hover .arrow { color: var(--navy); transform: translateX(2px); }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 12px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      background: var(--white);
+    }
+    footer strong { color: var(--navy); }
   </style>
 </head>
 <body>
-  <div class="container">
-    <p class="eyebrow">FBB · Gestaltungsvorschläge</p>
-    <div class="list">
-      <a class="card" href="/gestaltungsvorschlag-1/">
-        <div class="card-left">
-          <div class="badge b1">1</div>
-          <div><p class="card-title">Gestaltungsvorschlag 1</p><p class="card-sub">Variante A: Blau-Weiß</p></div>
-        </div>
-        <svg class="arrow" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
-      <a class="card" href="/gestaltungsvorschlag-2/">
-        <div class="card-left">
-          <div class="badge b2">2</div>
-          <div><p class="card-title">Gestaltungsvorschlag 2</p><p class="card-sub">Variante B: Weiß-Blau</p></div>
-        </div>
-        <svg class="arrow" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
-      <a class="card" href="/gestaltungsvorschlag-3/">
-        <div class="card-left">
-          <div class="badge b3">3</div>
-          <div><p class="card-title">Gestaltungsvorschlag 3</p><p class="card-sub">Variante C: Weiß-Orange</p></div>
-        </div>
-        <svg class="arrow" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
+
+  <header>
+    <div class="header-dot"></div>
+    <span class="header-wordmark">jetzt-transformieren.de</span>
+    <div class="header-sep"></div>
+    <span class="header-sub">Chat-Widget · Ausschreibung f-bb gGmbH</span>
+    <span class="header-badge">Entwurf</span>
+  </header>
+
+  <main>
+    <div class="container">
+      <p class="eyebrow">Gestaltungsvorschläge</p>
+      <h1>Chat-Widget · Drei Varianten</h1>
+      <p class="sub">
+        Interaktive Mockups für das KI-Assistenzsystem auf jetzt-transformieren.de.
+        Jede Variante zeigt Widget-Oberfläche, Mobilansicht und Admin-Bereich.
+        Im Browser öffnen und direkt ausprobieren.
+      </p>
+
+      <div class="list">
+        <a class="card card-1" href="gestaltungsvorschlag-1/">
+          <div class="card-left">
+            <div class="badge b1">1</div>
+            <div>
+              <p class="card-title">Gestaltungsvorschlag 1</p>
+              <p class="card-desc">Strukturiert · Karten-Rollenwahl · Blaues Header-Panel</p>
+              <span class="card-tag tag-1">Figtree · Karten-Grid</span>
+            </div>
+          </div>
+          <svg class="arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+
+        <a class="card card-2" href="gestaltungsvorschlag-2/">
+          <div class="card-left">
+            <div class="badge b2">2</div>
+            <div>
+              <p class="card-title">Gestaltungsvorschlag 2</p>
+              <p class="card-desc">Klares Layout · Pill-Rollenwahl · Weißes Widget</p>
+              <span class="card-tag tag-2">Inter · Pill-Toggles</span>
+            </div>
+          </div>
+          <svg class="arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+
+        <a class="card card-3" href="gestaltungsvorschlag-3/">
+          <div class="card-left">
+            <div class="badge b3">3</div>
+            <div>
+              <p class="card-title">Gestaltungsvorschlag 3</p>
+              <p class="card-desc">Kantiger Stil · Nummerierte Rollenwahl · Orange-Akzent</p>
+              <span class="card-tag tag-3">Inter · Kante-Design</span>
+            </div>
+          </div>
+          <svg class="arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      </div>
     </div>
-    <p class="footer">fbb.xqtfive.com</p>
-  </div>
+  </main>
+
+  <footer>
+    <strong>f-bb gGmbH</strong> · Nürnberg · Ausschreibung jetzt-transformieren.de · Entwurf 2026
+  </footer>
+
 </body>
 </html>

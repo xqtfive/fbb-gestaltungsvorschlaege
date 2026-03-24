@@ -1447,7 +1447,7 @@
 
           <!-- Role Selection: pill toggles (v6) — no role="button" on <button> -->
           <div class="welcome-section" role="region" aria-label="Rollenwahl">
-            <p class="section-label" id="role-label">Ich bin …</p>
+            <p class="section-label" id="role-label">Ich bin … <span style="font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);margin-left:2px;">(optional)</span></p>
             <div class="role-pills" role="group" aria-labelledby="role-label">
               <button class="role-pill selected" aria-pressed="true"
                       onclick="selectRole(this, 'gf')" aria-label="Geschäftsführung">
@@ -1466,6 +1466,13 @@
                 🔍 Sonstige
               </button>
             </div>
+
+            <button
+              onclick="selectRole(null, null)"
+              style="display:block;margin-top:8px;background:none;border:none;font-size:11.5px;color:var(--muted);cursor:pointer;text-decoration:underline;text-underline-offset:2px;padding:0;"
+              aria-label="Ohne Rollenangabe direkt starten">
+              Ohne Angabe fortfahren
+            </button>
           </div>
 
           <!-- Starter suggestions: 3 buttons matching JS object (WCAG fix) -->
