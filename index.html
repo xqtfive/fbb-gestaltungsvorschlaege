@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FBB – Gestaltungsvorschläge</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #f5f5f3; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+    .container { max-width: 520px; width: 100%; }
+    .eyebrow { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; }
+    h1 { font-size: 22px; font-weight: 500; color: #111; margin-bottom: 0.4rem; }
+    .sub { font-size: 14px; color: #666; margin-bottom: 2rem; line-height: 1.6; }
+    .list { display: flex; flex-direction: column; gap: 12px; }
+    .card { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; background: #fff; border: 1px solid #e5e5e3; border-radius: 12px; text-decoration: none; color: inherit; transition: border-color 0.15s, box-shadow 0.15s; }
+    .card:hover { border-color: #aaa; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .card-left { display: flex; align-items: center; gap: 14px; }
+    .badge { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; flex-shrink: 0; }
+    .b1 { background: #E6F1FB; color: #0C447C; }
+    .b2 { background: #E1F5EE; color: #085041; }
+    .b3 { background: #FAECE7; color: #712B13; }
+    .card-title { font-size: 15px; font-weight: 500; color: #111; }
+    .card-sub { font-size: 13px; color: #666; margin-top: 2px; }
+    .arrow { color: #bbb; }
+    .footer { text-align: center; margin-top: 2rem; font-size: 12px; color: #aaa; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <p class="eyebrow">FBB · Gestaltungsvorschläge</p>
+    <div class="list">
+      <a class="card" href="/gestaltungsvorschlag-1/">
+        <div class="card-left">
+          <div class="badge b1">1</div>
+          <div><p class="card-title">Gestaltungsvorschlag 1</p><p class="card-sub">Variante A: Blau-Weiß</p></div>
+        </div>
+        <svg class="arrow" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a class="card" href="/gestaltungsvorschlag-2/">
+        <div class="card-left">
+          <div class="badge b2">2</div>
+          <div><p class="card-title">Gestaltungsvorschlag 2</p><p class="card-sub">Variante B: Weiß-Blau</p></div>
+        </div>
+        <svg class="arrow" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a class="card" href="/gestaltungsvorschlag-3/">
+        <div class="card-left">
+          <div class="badge b3">3</div>
+          <div><p class="card-title">Gestaltungsvorschlag 3</p><p class="card-sub">Variante C: Weiß-Orange</p></div>
+        </div>
+        <svg class="arrow" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+    <p class="footer">fbb.xqtfive.com</p>
+  </div>
+</body>
+</html>

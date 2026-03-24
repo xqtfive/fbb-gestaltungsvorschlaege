@@ -1,0 +1,2791 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat-Widget · Gestaltungsvorschlag v6 · jetzt-transformieren.de</title>
+  <!-- Inter — In Produktion lokal gehostet (DSGVO-konform) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ================================================================
+       DESIGN TOKENS
+       Klar-Theme v6 — gleiche Markenfarben wie v5, neue Anwendung.
+       Orange (#ff6600) nur als Akzent/Dekoration — NICHT als Textfarbe
+       auf weißem Untergrund (Kontrast ~2.9:1, verfehlt WCAG 1.4.3).
+    ================================================================ */
+    :root {
+      --navy:         #245883;
+      --navy-dark:    #1a3e5e;
+      --navy-deep:    #0f2536;
+      --blue:         #009ee0;
+      --blue-soft:    #e0f4fc;
+      --orange:       #ff6600;
+      --orange-soft:  #fff3eb;
+
+      --white:        #ffffff;
+      --bg:           #edf2f7;
+      --surface:      #ffffff;
+      --surface-2:    #f4f7fb;
+      --text:         #0f2536;
+      --text-2:       #3a5068;
+      --muted:        #6b8299;
+      --border:       #d0dce8;
+      --border-2:     #e4ecf4;
+
+      --green:        #16a34a;
+      --green-soft:   #dcfce7;
+      --red:          #dc2626;
+      --red-soft:     #fee2e2;
+      --amber:        #b45309;
+      --amber-soft:   #fef3c7;
+
+      --type-rag:     var(--navy);
+      --type-nav:     var(--blue);
+      --type-faq:     var(--green);
+      --type-reflect: #7c3aed;
+
+      --r-xs:   4px;
+      --r-sm:   8px;
+      --r-md:   12px;
+      --r-lg:   18px;
+      --r-xl:   24px;
+      --r-full: 9999px;
+
+      --sh-xs:     0 1px 3px rgba(15,37,54,.06);
+      --sh-sm:     0 2px 8px rgba(15,37,54,.09);
+      --sh-md:     0 4px 20px rgba(15,37,54,.11);
+      --sh-lg:     0 8px 40px rgba(15,37,54,.14);
+      --sh-widget: 0 20px 80px rgba(15,37,54,.20), 0 4px 16px rgba(15,37,54,.10);
+
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ================================================================
+       RESET & BASE
+    ================================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    textarea, input { font-family: inherit; }
+    svg { display: block; }
+    a { color: var(--blue); text-decoration: underline; }
+    /* WCAG fix: navy outline (4.6:1) instead of orange (2.9:1) */
+    a:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; border-radius: 2px; }
+
+    .skip-link {
+      position: absolute;
+      top: -9999px;
+      left: 16px;
+      z-index: 9999;
+      padding: 8px 16px;
+      background: var(--navy-deep);
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--r-sm);
+      text-decoration: none;
+    }
+    .skip-link:focus { top: 8px; }
+
+    /* ================================================================
+       ANIMATIONS
+    ================================================================ */
+    @keyframes msgIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes typingPulse {
+      0%, 80%, 100% { transform: scale(1);   opacity: .4; }
+      40%            { transform: scale(1.4); opacity: 1;  }
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(.94) translateY(4px); }
+      to   { opacity: 1; transform: scale(1)   translateY(0);   }
+    }
+    @keyframes fabPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(36,88,131,.4); }
+      50%       { box-shadow: 0 0 0 12px rgba(36,88,131,.0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+      }
+    }
+
+    /* ================================================================
+       DEMO SHELL
+    ================================================================ */
+    .demo-header {
+      background: var(--navy-deep);
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      box-shadow: 0 2px 12px rgba(0,0,0,.25);
+    }
+    .demo-wordmark {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -.3px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .demo-sep { width: 1px; height: 20px; background: rgba(255,255,255,.15); }
+    .demo-sub { font-size: 13px; color: rgba(255,255,255,.55); }
+    .demo-badge {
+      margin-left: auto;
+      background: rgba(255,102,0,.15);
+      border: 1px solid rgba(255,102,0,.35);
+      color: #ffb380;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: var(--r-full);
+      letter-spacing: .3px;
+    }
+
+    /* ── Tab nav: underline style (v6 "Klar") ── */
+    .tab-nav {
+      background: var(--surface);
+      border-bottom: 2px solid var(--border-2);
+      padding: 0 32px;
+      display: flex;
+      gap: 0;
+      position: sticky;
+      top: 53px;
+      z-index: 199;
+    }
+    .tab-btn {
+      padding: 12px 18px;
+      border: none;
+      border-bottom: 2.5px solid transparent;
+      margin-bottom: -2px;
+      border-radius: 0;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+      background: none;
+      transition: color 160ms var(--ease), border-bottom-color 160ms var(--ease);
+      white-space: nowrap;
+    }
+    .tab-btn:hover { color: var(--navy); }
+    .tab-btn.active {
+      color: var(--navy);
+      border-bottom-color: var(--orange);
+      font-weight: 600;
+    }
+    /* WCAG fix: navy outline */
+    .tab-btn:focus-visible { outline: 3px solid var(--navy); outline-offset: -3px; }
+
+    .tab-panel { display: none; padding: 40px 20px 80px; }
+    .tab-panel.active { display: block; }
+
+    .stage {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 48px;
+    }
+    .stage-note {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .7px;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    /* FAB */
+    .fab {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      background: var(--navy);
+      color: var(--white);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: var(--sh-lg);
+      transition: transform 200ms var(--ease), box-shadow 200ms var(--ease);
+      z-index: 300;
+      animation: fabPulse 3s ease-in-out 2s 3;
+    }
+    .fab:hover { transform: scale(1.06); box-shadow: var(--sh-widget); }
+    /* Dark button: white outline for contrast */
+    .fab:focus-visible { outline: 3px solid rgba(255,255,255,0.8); outline-offset: 3px; }
+    .fab-label {
+      position: absolute;
+      right: 68px;
+      background: var(--navy-deep);
+      color: var(--white);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: var(--r-sm);
+      white-space: nowrap;
+      pointer-events: none;
+      animation: popIn 400ms 1s both;
+    }
+    .fab-label::after {
+      content: '';
+      position: absolute;
+      right: -5px; top: 50%;
+      transform: translateY(-50%);
+      border: 5px solid transparent;
+      border-right: none;
+      border-left-color: var(--navy-deep);
+    }
+
+    /* ================================================================
+       WIDGET SHELL
+    ================================================================ */
+    .widget {
+      width: 400px;
+      max-width: 100%;
+      border-radius: var(--r-xl);
+      background: var(--surface);
+      box-shadow: var(--sh-widget);
+      overflow: hidden;
+      border: 1px solid rgba(15,37,54,.07);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Widget Header: white bg + orange left strip (v6) ── */
+    .w-head {
+      background: var(--white);
+      border-bottom: 1px solid var(--border-2);
+      padding: 14px 16px 13px 19px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      flex-shrink: 0;
+    }
+    /* 3px orange left accent strip */
+    .w-head::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--orange);
+    }
+    .w-head-avatar {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: var(--navy);
+      border: 2px solid rgba(36,88,131,.15);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .w-head-info { flex: 1; }
+    .w-head-name {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--navy-deep);    /* was white in v5 */
+      letter-spacing: -.2px;
+      line-height: 1.2;
+    }
+    .w-head-status {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 2px;
+    }
+    .status-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #4ade80;
+      box-shadow: 0 0 0 2px rgba(74,222,128,.25);
+    }
+    .status-text {
+      font-size: 11.5px;
+      color: var(--muted);       /* was rgba-white in v5 */
+    }
+    .role-badge {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: .3px;
+      background: rgba(255,102,0,.08);
+      border: 1px solid rgba(255,102,0,.2);
+      color: var(--navy-deep);
+      padding: 2px 8px;
+      border-radius: var(--r-full);
+    }
+    .w-head-actions { display: flex; gap: 4px; }
+    .head-btn {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      color: var(--muted);
+      display: flex; align-items: center; justify-content: center;
+      transition: background 150ms, color 150ms;
+      font-size: 15px;
+    }
+    .head-btn:hover { background: var(--border); color: var(--navy); }
+    .head-btn:focus-visible { outline: 3px solid var(--navy); outline-offset: 1px; }
+
+    /* ── EU AI Act Disclosure Strip ── */
+    .ai-disclosure {
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--border-2);
+      padding: 9px 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      flex-shrink: 0;
+    }
+    .ai-disclosure-icon {
+      width: 16px; height: 16px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      color: var(--blue);
+    }
+    .ai-disclosure-text {
+      font-size: 11.5px;
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+    .ai-disclosure-text strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* ================================================================
+       WELCOME SCREEN — editorial-clean (v6)
+    ================================================================ */
+    .welcome-hero {
+      background: var(--surface);
+      padding: 28px 18px 22px;
+      border-bottom: 1px solid var(--border-2);
+      flex-shrink: 0;
+    }
+    .welcome-greeting {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--navy-deep);
+      letter-spacing: -.5px;
+      line-height: 1.2;
+      margin-bottom: 10px;
+      overflow-wrap: break-word;
+    }
+    .welcome-accent {
+      width: 36px; height: 3px;
+      background: var(--orange);
+      border-radius: 2px;
+      margin-bottom: 14px;
+    }
+    .welcome-sub {
+      font-size: 13.5px;
+      color: var(--text-2);
+      line-height: 1.6;
+      max-width: 300px;
+    }
+    .welcome-caps {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    .cap-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 11px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-full);
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--navy);
+    }
+
+    /* ── Role pills (v6: horizontal flex-wrap instead of 2×2 grid) ── */
+    .welcome-section {
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid var(--border-2);
+    }
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .7px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .role-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+    .role-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-full);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-2);
+      background: var(--surface);
+      cursor: pointer;
+      transition: border-color 160ms var(--ease), background 160ms var(--ease), color 160ms var(--ease);
+    }
+    .role-pill:hover { border-color: var(--navy); color: var(--navy); }
+    .role-pill.selected {
+      background: var(--navy);
+      border-color: var(--navy);
+      color: var(--white);
+    }
+    .role-pill:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+
+    /* ── Suggestions ── */
+    .suggestion-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 14px 16px 12px;
+      border-bottom: 1px solid var(--border-2);
+    }
+    .suggestion-btn {
+      padding: 9px 13px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      background: var(--surface);
+      font-size: 13px;
+      color: var(--text-2);
+      text-align: left;
+      line-height: 1.45;
+      transition: border-color 150ms, background 150ms, color 150ms;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .suggestion-btn::before {
+      content: '→';
+      color: var(--orange);
+      font-weight: 700;
+      flex-shrink: 0;
+      font-size: 14px;
+    }
+    .suggestion-btn:hover {
+      border-color: var(--navy);
+      background: var(--surface-2);
+      color: var(--navy);
+    }
+    .suggestion-btn:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+
+    .welcome-input-section { padding: 12px 16px 14px; }
+
+    .privacy-footer {
+      padding: 8px 16px 14px;
+      font-size: 10.5px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.5;
+    }
+    .privacy-footer a { color: var(--muted); }
+
+    /* ================================================================
+       CHAT TRANSCRIPT
+    ================================================================ */
+    .chat-body {
+      flex: 1;
+      overflow-y: auto;
+      background: var(--surface-2);
+      padding: 14px 14px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      scroll-behavior: smooth;
+    }
+    .chat-body:focus { outline: none; }
+
+    .date-divider {
+      text-align: center;
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 500;
+      letter-spacing: .3px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .date-divider::before, .date-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .msg-system {
+      text-align: center;
+      font-size: 11.5px;
+      color: var(--muted);
+      background: var(--surface);
+      border: 1px solid var(--border-2);
+      border-radius: var(--r-sm);
+      padding: 7px 12px;
+    }
+
+    /* User bubble — pill shape (v6) */
+    .msg-user {
+      display: flex;
+      justify-content: flex-end;
+      animation: msgIn 250ms var(--ease) both;
+    }
+    .bubble-user {
+      background: var(--navy);
+      color: var(--white);
+      padding: 10px 14px;
+      border-radius: 20px 20px 4px 20px;   /* v6 pill shape */
+      max-width: 72%;
+      font-size: 13.5px;
+      line-height: 1.5;
+      word-wrap: break-word;
+    }
+    .bubble-meta {
+      font-size: 10.5px;
+      color: rgba(255,255,255,.55);
+      margin-top: 4px;
+      text-align: right;
+    }
+
+    /* AI card — clean white, shadow only, no left border (v6) */
+    .msg-ai { animation: msgIn 250ms var(--ease) both; }
+    .ai-card {
+      background: var(--surface);
+      border-radius: var(--r-md);
+      border: 1px solid rgba(15,37,54,.06);
+      box-shadow: 0 2px 12px rgba(15,37,54,.08);
+      overflow: hidden;
+      transition: box-shadow 180ms var(--ease);
+    }
+    .ai-card:hover { box-shadow: 0 4px 20px rgba(15,37,54,.12); }
+    /* No type-specific left border — avatar color is the type indicator */
+
+    .ai-card-header {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 10px 14px 7px;
+    }
+    .ai-avatar-sm {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: var(--navy);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .ai-card-sender {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .msg-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 7px;
+      border-radius: var(--r-full);
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+    .badge-rag     { background: #e8eef5; color: var(--navy); }
+    .badge-nav     { background: var(--blue-soft); color: #0077aa; }
+    .badge-faq     { background: var(--green-soft); color: #166534; }
+    .badge-reflect { background: #ede9fe; color: #5b21b6; }
+    .badge-warn    { background: var(--amber-soft); color: var(--amber); }
+    .msg-time {
+      margin-left: auto;
+      font-size: 10.5px;
+      color: var(--muted);
+      opacity: 0;
+      transition: opacity 200ms;
+    }
+    .ai-card:hover .msg-time,
+    .ai-card:focus-within .msg-time { opacity: 1; }
+
+    .ai-card-body { padding: 0 14px 10px; }
+    .ai-card-body h4 {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--navy-deep);
+      margin-bottom: 5px;
+      line-height: 1.3;
+    }
+    .ai-card-body p { font-size: 13px; color: var(--text-2); line-height: 1.65; }
+    .ai-card-body ul {
+      margin: 7px 0 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .ai-card-body li {
+      font-size: 13px;
+      color: var(--text-2);
+      padding-left: 16px;
+      position: relative;
+      line-height: 1.55;
+    }
+    .ai-card-body li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--orange);
+      font-weight: 700;
+    }
+    .ai-card-body strong { color: var(--navy-deep); }
+
+    .reflect-block {
+      font-style: italic;
+      border-left: 3px solid #7c3aed;
+      background: #faf8ff;
+      padding: 9px 13px;
+      border-radius: 0 var(--r-sm) var(--r-sm) 0;
+      margin-top: 8px;
+      color: var(--text);
+      font-size: 13.5px;
+      line-height: 1.6;
+    }
+
+    .nav-links {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-top: 9px;
+    }
+    .nav-link-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      background: var(--surface);
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--navy);
+      text-decoration: none;
+      transition: border-color 150ms, background 150ms, transform 150ms;
+      cursor: pointer;
+    }
+    .nav-link-btn:hover {
+      border-color: var(--blue);
+      background: var(--blue-soft);
+      color: #0077aa;
+      transform: translateX(2px);
+      text-decoration: none;
+    }
+    .nav-link-btn:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+    .nav-link-icon { color: var(--blue); flex-shrink: 0; }
+
+    /* Source accordion */
+    .sources-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-top: 1px solid var(--border-2);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--blue);
+      transition: background 150ms;
+      cursor: pointer;
+      text-align: left;
+    }
+    .sources-toggle:hover { background: var(--blue-soft); }
+    .sources-toggle:focus-visible { outline: 3px solid var(--navy); outline-offset: -3px; }
+    .sources-toggle .chevron {
+      margin-left: auto;
+      transition: transform 200ms var(--ease);
+      font-size: 11px;
+    }
+    .sources-toggle[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+    .sources-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 280ms var(--ease);
+    }
+    .sources-body.open { max-height: 400px; }
+    .sources-inner {
+      padding: 8px 14px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    /* Source items — white + orange left border + square num (v6) */
+    .source-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 7px 10px;
+      background: var(--white);
+      border: 1px solid var(--border-2);
+      border-left: 3px solid var(--orange);
+      border-radius: 0 var(--r-sm) var(--r-sm) 0;
+      text-decoration: none;
+      transition: background 150ms;
+    }
+    .source-item:hover { background: var(--surface-2); text-decoration: none; }
+    .source-item:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+    .source-num {
+      width: 18px; height: 18px;
+      border-radius: 3px;           /* square in v6 */
+      background: var(--navy);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .source-info { flex: 1; min-width: 0; }
+    .source-title { font-size: 12px; font-weight: 600; color: var(--navy); display: block; }
+    .source-url {
+      font-size: 11px;
+      color: var(--blue);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
+    }
+
+    /* Feedback toolbar */
+    .feedback-bar {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      padding: 6px 14px 10px;
+    }
+    .feedback-label { font-size: 11px; color: var(--muted); margin-right: 4px; }
+    .fb-btn {
+      width: 28px; height: 28px;
+      border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      color: var(--muted);
+      transition: background 150ms, color 150ms;
+    }
+    .fb-btn:hover { background: var(--surface-2); color: var(--text); }
+    .fb-btn.active-pos { color: var(--green); background: var(--green-soft); }
+    .fb-btn.active-neg { color: var(--red);   background: var(--red-soft); }
+    .fb-btn:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+    .fb-divider { width: 1px; height: 16px; background: var(--border); margin: 0 4px; }
+    .reflect-trigger {
+      margin-left: auto;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #7c3aed;
+      padding: 4px 9px;
+      border: 1.5px solid #c4b5fd;
+      border-radius: var(--r-full);
+      background: #faf8ff;
+      transition: background 150ms;
+      cursor: pointer;
+    }
+    .reflect-trigger:hover { background: #ede9fe; }
+    .reflect-trigger:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+
+    /* Typing indicator */
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: var(--surface);
+      border-radius: var(--r-md);
+      border: 1px solid rgba(15,37,54,.06);
+      box-shadow: 0 2px 12px rgba(15,37,54,.08);
+      width: fit-content;
+      animation: msgIn 250ms var(--ease) both;
+    }
+    .typing-dots { display: flex; gap: 4px; align-items: center; }
+    .typing-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--navy);
+      animation: typingPulse 1.2s ease-in-out infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: .15s; }
+    .typing-dot:nth-child(3) { animation-delay: .30s; }
+    .typing-text { font-size: 12px; color: var(--muted); font-style: italic; }
+
+    /* Quick replies */
+    .quick-replies {
+      display: flex;
+      gap: 6px;
+      padding: 8px 14px;
+      overflow-x: auto;
+      border-top: 1px solid var(--border-2);
+      background: var(--surface);
+      scrollbar-width: none;
+      flex-shrink: 0;
+    }
+    .quick-replies::-webkit-scrollbar { display: none; }
+    .qr-btn {
+      flex-shrink: 0;
+      padding: 6px 13px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-full);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--navy);
+      background: var(--surface);
+      transition: all 150ms;
+      white-space: nowrap;
+    }
+    .qr-btn:hover { border-color: var(--navy); background: var(--navy); color: var(--white); }
+    .qr-btn:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+
+    /* ================================================================
+       INPUT AREA — bottom-border only (v6)
+    ================================================================ */
+    .chat-footer {
+      padding: 10px 12px 12px;
+      border-top: 1px solid var(--border-2);
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+    .input-wrap {
+      display: flex;
+      align-items: flex-end;
+      gap: 7px;
+      background: transparent;
+      border: none;
+      border-bottom: 1.5px solid var(--border);
+      border-radius: 0;
+      padding: 6px 0 8px;
+      transition: border-bottom-color 200ms var(--ease);
+    }
+    .input-wrap:focus-within {
+      border-bottom-color: var(--navy);
+      box-shadow: none;
+    }
+    .chat-textarea {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 13.5px;
+      color: var(--text);
+      outline: none;
+      resize: none;
+      min-height: 22px;
+      max-height: 80px;
+      line-height: 1.5;
+      overflow-y: auto;
+    }
+    .chat-textarea::placeholder { color: #aab8c5; }
+    .send-btn {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--navy);
+      color: var(--white);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: background 150ms, transform 180ms var(--ease), box-shadow 180ms;
+    }
+    .send-btn:hover:not(:disabled) {
+      background: var(--navy-dark);
+      transform: scale(1.06);
+      box-shadow: var(--sh-sm);
+    }
+    .send-btn:disabled { background: var(--border); cursor: not-allowed; transform: none; }
+    .send-btn:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+    .input-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0 0;
+    }
+    .input-hint {
+      font-size: 10.5px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .input-hint kbd {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 1px 4px;
+      font-family: inherit;
+      font-size: 10px;
+    }
+    .char-counter { font-size: 10.5px; color: var(--muted); }
+    .char-counter.warn { color: var(--amber); font-weight: 600; }
+
+    /* ================================================================
+       FALLBACK / ALERT STATES
+    ================================================================ */
+    .alert-strip {
+      padding: 8px 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 12px;
+      border-bottom: 1px solid;
+      flex-shrink: 0;
+    }
+    .alert-strip.warn {
+      background: var(--amber-soft);
+      border-color: #fde68a;
+      color: #78350f;
+    }
+    .alert-strip.info {
+      background: var(--blue-soft);
+      border-color: #bae6fd;
+      color: #0c4a6e;
+    }
+    .alert-icon { flex-shrink: 0; font-size: 14px; margin-top: 1px; }
+
+    .contact-card {
+      margin: 8px 14px 12px;
+      padding: 12px 14px;
+      background: #f0fdf4;
+      border: 1.5px solid #bbf7d0;
+      border-radius: var(--r-md);
+    }
+    .contact-card-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #14532d;
+      margin-bottom: 6px;
+    }
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12.5px;
+      color: var(--green);
+      text-decoration: none;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    .contact-link:hover { text-decoration: underline; }
+
+    /* ================================================================
+       STATES GRID (Tab 3)
+    ================================================================ */
+    .states-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 28px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .state-card {
+      background: var(--surface);
+      border-radius: var(--r-xl);
+      box-shadow: var(--sh-md);
+      overflow: hidden;
+      border: 1px solid rgba(15,37,54,.06);
+    }
+    .state-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .7px;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    /* ================================================================
+       MOBILE VIEW (Tab 4)
+    ================================================================ */
+    .mobile-device {
+      width: 375px;
+      max-width: 100%;
+      margin: 0 auto;
+      border-radius: 36px;
+      box-shadow: 0 24px 80px rgba(15,37,54,.22), 0 0 0 10px var(--navy-deep), 0 0 0 12px rgba(255,255,255,.08);
+      overflow: hidden;
+      background: var(--surface);
+    }
+    .mobile-notch {
+      background: var(--navy-deep);
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mobile-notch-bar { width: 100px; height: 6px; background: rgba(255,255,255,.25); border-radius: 3px; }
+    .mobile-widget { height: 620px; display: flex; flex-direction: column; }
+    .mobile-home-bar {
+      background: var(--surface);
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mobile-home-pill { width: 100px; height: 4px; background: var(--border); border-radius: 2px; }
+
+    /* ================================================================
+       ADMIN PANEL — white sidebar (v6)
+    ================================================================ */
+    .admin-shell {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      background: var(--surface);
+      border-radius: var(--r-xl);
+      box-shadow: var(--sh-lg);
+      overflow: hidden;
+      min-height: 680px;
+      border: 1px solid var(--border-2);
+    }
+    .admin-sidebar {
+      width: 210px;
+      flex-shrink: 0;
+      background: var(--white);          /* white in v6 */
+      border-right: 1px solid var(--border-2);
+      display: flex;
+      flex-direction: column;
+      padding: 20px 0 16px;
+    }
+    .admin-sidebar-logo {
+      padding: 0 16px 20px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--navy-deep);           /* navy in v6 */
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-2);
+      margin-bottom: 12px;
+    }
+    .admin-sidebar-logo-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--orange);
+      flex-shrink: 0;
+    }
+    .admin-sidebar-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .7px;
+      color: var(--muted);              /* muted grey in v6 */
+      padding: 8px 16px 4px;
+    }
+    .admin-nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-2);             /* navy text in v6 */
+      background: none;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+      transition: background 150ms, color 150ms;
+    }
+    .admin-nav-btn:hover { background: var(--surface-2); color: var(--navy); }
+    .admin-nav-btn.active {
+      background: #eef4fb;
+      color: var(--navy);
+      font-weight: 600;
+      box-shadow: inset 3px 0 0 var(--orange);  /* orange left bar on active */
+    }
+    .admin-nav-btn svg { flex-shrink: 0; opacity: .6; }
+    .admin-nav-btn.active svg { opacity: 1; }
+    .admin-nav-btn.signout { color: var(--red); }
+    .admin-nav-spacer { flex: 1; }
+    .admin-nav-divider { height: 1px; background: var(--border-2); margin: 8px 0; }
+
+    .admin-main {
+      flex: 1;
+      overflow-y: auto;
+      background: var(--bg);
+      padding: 28px 28px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    .admin-section { display: none; flex-direction: column; gap: 20px; }
+    .admin-section.active { display: flex; }
+
+    .admin-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .admin-topbar h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--navy-deep);
+      letter-spacing: -.3px;
+    }
+    .admin-topbar-meta { font-size: 12px; color: var(--muted); }
+
+    .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .kpi-card {
+      background: var(--surface);
+      border-radius: var(--r-md);
+      padding: 16px 18px 14px;
+      border: 1px solid var(--border-2);
+      box-shadow: var(--sh-xs);
+    }
+    .kpi-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); margin-bottom: 6px; }
+    .kpi-value { font-size: 26px; font-weight: 800; color: var(--navy-deep); letter-spacing: -.5px; line-height: 1; }
+    .kpi-delta { font-size: 11.5px; margin-top: 5px; display: flex; align-items: center; gap: 4px; }
+    .kpi-delta.up { color: var(--green); }
+    .kpi-delta.down { color: var(--red); }
+    .kpi-delta.warn { color: var(--amber); }
+    .kpi-delta.neutral { color: var(--muted); }
+
+    .admin-card {
+      background: var(--surface);
+      border-radius: var(--r-md);
+      border: 1px solid var(--border-2);
+      box-shadow: var(--sh-xs);
+      overflow: hidden;
+    }
+    .admin-card-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .admin-card-title { font-size: 13.5px; font-weight: 700; color: var(--navy-deep); }
+    .admin-card-subtitle { font-size: 11.5px; color: var(--muted); margin-top: 1px; }
+    .admin-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .admin-table th {
+      text-align: left;
+      padding: 9px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--muted);
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--border-2);
+    }
+    .admin-table td {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border-2);
+      color: var(--text-2);
+      vertical-align: middle;
+    }
+    .admin-table tr:last-child td { border-bottom: none; }
+    .admin-table tr:hover td { background: var(--surface-2); }
+    .admin-table .trunc { max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .admin-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 8px;
+      border-radius: var(--r-full);
+      font-size: 10.5px;
+      font-weight: 700;
+    }
+    .admin-badge.rag     { background: #e8eef5; color: var(--navy); }
+    .admin-badge.nav     { background: var(--blue-soft); color: #0077aa; }
+    .admin-badge.faq     { background: var(--green-soft); color: #166534; }
+    .admin-badge.reflect { background: #ede9fe; color: #5b21b6; }
+    .admin-badge.warn    { background: var(--amber-soft); color: var(--amber); }
+    .admin-badge.ok      { background: var(--green-soft); color: var(--green); }
+    .admin-badge.err     { background: #fee2e2; color: var(--red); }
+
+    .btn-primary {
+      padding: 7px 16px;
+      background: var(--navy);
+      color: var(--white);
+      border-radius: var(--r-sm);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 150ms;
+      font-family: var(--font);
+    }
+    .btn-primary:hover { background: var(--navy-dark); }
+    .btn-secondary {
+      padding: 6px 14px;
+      background: var(--surface);
+      color: var(--navy);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 150ms, background 150ms;
+      font-family: var(--font);
+    }
+    .btn-secondary:hover { border-color: var(--navy); background: var(--surface-2); }
+    .btn-danger {
+      padding: 5px 11px;
+      background: none;
+      color: var(--red);
+      border: 1.5px solid #fca5a5;
+      border-radius: var(--r-sm);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font);
+    }
+    .btn-danger:hover { background: #fee2e2; }
+
+    .admin-form-group { display: flex; flex-direction: column; gap: 6px; }
+    .admin-label { font-size: 12px; font-weight: 700; color: var(--text-2); }
+    .admin-select, .admin-textarea-lg {
+      font-family: var(--font);
+      font-size: 13px;
+      color: var(--text);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      background: var(--surface);
+      padding: 8px 12px;
+      outline: none;
+      transition: border-color 180ms;
+    }
+    .admin-select { width: 220px; }
+    .admin-textarea-lg { width: 100%; height: 160px; resize: vertical; line-height: 1.6; }
+    .admin-select:focus, .admin-textarea-lg:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(36,88,131,.1); }
+
+    .kb-status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 18px;
+    }
+    .kb-status-info { font-size: 13px; color: var(--text-2); }
+    .kb-status-info strong { color: var(--navy-deep); }
+    .kb-status-time { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+
+    .sparkline-row {
+      display: flex;
+      gap: 3px;
+      align-items: flex-end;
+      height: 40px;
+      padding: 14px 18px 10px;
+    }
+    .spark-bar {
+      flex: 1;
+      background: var(--blue-soft);
+      border-radius: 2px 2px 0 0;
+      min-height: 4px;
+    }
+    .spark-bar.today { background: var(--navy); }
+
+    /* ── 4-Layer Logging Architecture ──────────────────────────── */
+    .log-layer { margin-bottom: 24px; }
+    .log-layer-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px; border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid rgba(0,0,0,.06);
+    }
+    .log-layer-title { font-size: 13px; font-weight: 700; }
+    .log-layer-sub { font-size: 11px; margin-left: 8px; }
+    .log-layer-a { background: #e8f4fd; border-left: 3px solid #009ee0; }
+    .log-layer-a .log-layer-title { color: #0369a1; }
+    .log-layer-a .log-layer-sub { color: #0369a1; opacity: .7; }
+    .log-layer-b { background: #eef4fb; border-left: 3px solid #245883; }
+    .log-layer-b .log-layer-title { color: #1a3e5e; }
+    .log-layer-b .log-layer-sub { color: #1a3e5e; opacity: .7; }
+    .log-layer-c { background: #fffbeb; border-left: 3px solid #d97706; }
+    .log-layer-c .log-layer-title { color: #92400e; }
+    .log-layer-c .log-layer-sub { color: #78350f; opacity: .8; }
+    .log-layer-d { background: #fef2f2; border-left: 3px solid #dc2626; }
+    .log-layer-d .log-layer-title { color: #991b1b; }
+    .log-layer-d .log-layer-sub { color: #7f1d1d; opacity: .8; }
+    .log-layer-body { padding: 12px 14px; background: var(--white); border: 1px solid rgba(0,0,0,.08); border-top: none; border-radius: 0 0 6px 6px; }
+    .log-retention {
+      font-size: 11px; font-weight: 600; padding: 2px 8px;
+      border-radius: 20px; white-space: nowrap;
+    }
+    .log-ret-forever { background: #dcfce7; color: #166534; }
+    .log-ret-24h     { background: #dbeafe; color: #1e40af; }
+    .log-ret-72h     { background: #fef9c3; color: #854d0e; }
+    .log-ret-90d     { background: #fee2e2; color: #991b1b; }
+    .log-access { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; background: #fce7f3; color: #9d174d; white-space: nowrap; }
+    .log-notice {
+      background: #fffbeb; border: 1px solid #fcd34d; border-radius: 5px;
+      padding: 9px 12px; font-size: 12px; color: #78350f;
+      display: flex; gap: 8px; align-items: flex-start; margin-bottom: 12px;
+    }
+    .log-encrypted {
+      font-family: 'Courier New', monospace; font-size: 11px;
+      color: var(--muted); background: #f1f5f9;
+      padding: 1px 5px; border-radius: 3px; letter-spacing: .3px;
+    }
+    .log-optional-badge {
+      display: inline-block; font-size: 10px; font-weight: 700;
+      padding: 1px 6px; border-radius: 3px;
+      background: #fef3c7; color: #92400e;
+      vertical-align: middle; margin-left: 6px; text-transform: uppercase;
+    }
+  </style>
+</head>
+
+<body>
+  <a class="skip-link" href="#main-content">Zum Inhalt springen</a>
+
+  <!-- ══ DEMO HEADER ══════════════════════════════════════════════ -->
+  <header class="demo-header" role="banner">
+    <div class="demo-wordmark">
+      <img src="https://jetzt-transformieren.de/assets/img/logo_transform-by.svg"
+           alt="transform.by – jetzt-transformieren.de"
+           height="28"
+           style="filter: brightness(0) invert(1); display: block;">
+    </div>
+    <div class="demo-sep" aria-hidden="true"></div>
+    <span class="demo-sub">Chat-Widget · Gestaltungsvorschlag</span>
+    <span class="demo-badge">v6</span>
+  </header>
+
+  <!-- ══ TAB NAVIGATION ═══════════════════════════════════════════
+       role="tablist" added (WCAG fix: role="tab" requires tablist owner)
+  ══════════════════════════════════════════════════════════════════ -->
+  <nav class="tab-nav" role="tablist" aria-label="Design-Varianten">
+    <button class="tab-btn active" onclick="showTab('welcome')" aria-selected="true" id="tab-btn-welcome" role="tab">Willkommen</button>
+    <button class="tab-btn" onclick="showTab('chat')" aria-selected="false" id="tab-btn-chat" role="tab">Chat-Ansicht</button>
+    <button class="tab-btn" onclick="showTab('states')" aria-selected="false" id="tab-btn-states" role="tab">Zustände</button>
+    <button class="tab-btn" onclick="showTab('mobile')" aria-selected="false" id="tab-btn-mobile" role="tab">Mobil</button>
+    <button class="tab-btn" onclick="showTab('admin')" aria-selected="false" id="tab-btn-admin" role="tab">Admin-Oberfläche</button>
+  </nav>
+
+  <main id="main-content">
+
+    <!-- ══════════════════════════════════════════════════════════
+         TAB 1: WILLKOMMEN
+    ══════════════════════════════════════════════════════════════ -->
+    <section class="tab-panel active" id="tab-welcome" role="tabpanel" aria-labelledby="tab-btn-welcome">
+      <p class="stage-note">Widget-Vorschau · Desktop</p>
+      <div class="stage">
+        <!-- aria-describedby wired to disclosure text (WCAG fix) -->
+        <div class="widget" role="dialog" aria-modal="false"
+             aria-label="Transform-Assistent – Chatbot jetzt-transformieren.de"
+             aria-describedby="ai-disclosure-text-1">
+
+          <!-- Header: white bg + orange left strip (v6) -->
+          <div class="w-head" role="banner">
+            <div class="w-head-avatar" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/><path d="M18 14l2 2 4-4"/></svg>
+            </div>
+            <div class="w-head-info">
+              <div class="w-head-name">Transform-Assistent</div>
+              <div class="w-head-status">
+                <span class="status-dot" aria-hidden="true"></span>
+                <span class="status-text">Online · jetzt-transformieren.de</span>
+              </div>
+            </div>
+            <div class="w-head-actions">
+              <button class="head-btn" aria-label="Widget verkleinern">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+              </button>
+              <button class="head-btn" aria-label="Chat schließen">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- EU AI Act Disclosure (Art. 50) — id wired for aria-describedby -->
+          <aside class="ai-disclosure" role="note" aria-label="Hinweis: KI-System">
+            <svg class="ai-disclosure-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            <span class="ai-disclosure-text" id="ai-disclosure-text-1">
+              <strong>KI-Assistent (EU AI Act Art. 50)</strong> · Keine menschliche Beratung · Quellenangaben bei jeder Antwort · Gesprächsdaten werden pseudonymisiert und max. 72 h zur Qualitätssicherung gespeichert.
+            </span>
+          </aside>
+
+          <!-- Welcome Hero: editorial-clean white (v6) -->
+          <div class="welcome-hero" role="region" aria-label="Begrüßung">
+            <h1 class="welcome-greeting">Hallo! Ich bin Ihr<br>Transformationsassistent.</h1>
+            <div class="welcome-accent" aria-hidden="true"></div>
+            <p class="welcome-sub">Fragen zur digitalen Transformation, Plattform-Navigation und Reflexion — ich helfe weiter.</p>
+            <div class="welcome-caps">
+              <span class="cap-chip">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                Wissen
+              </span>
+              <span class="cap-chip">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+                Navigation
+              </span>
+              <span class="cap-chip">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Reflexion
+              </span>
+            </div>
+          </div>
+
+          <!-- Role Selection: pill toggles (v6) — no role="button" on <button> -->
+          <div class="welcome-section" role="region" aria-label="Rollenwahl">
+            <p class="section-label" id="role-label">Ich bin …</p>
+            <div class="role-pills" role="group" aria-labelledby="role-label">
+              <button class="role-pill selected" aria-pressed="true"
+                      onclick="selectRole(this, 'gf')" aria-label="Geschäftsführung">
+                🏢 Geschäftsführung
+              </button>
+              <button class="role-pill" aria-pressed="false"
+                      onclick="selectRole(this, 'hr')" aria-label="Personalmanagement">
+                👥 Personalmanagement
+              </button>
+              <button class="role-pill" aria-pressed="false"
+                      onclick="selectRole(this, 'fk')" aria-label="Führungskraft">
+                📊 Führungskraft
+              </button>
+              <button class="role-pill" aria-pressed="false"
+                      onclick="selectRole(this, 'other')" aria-label="Sonstige / Fachöffentlichkeit">
+                🔍 Sonstige
+              </button>
+            </div>
+          </div>
+
+          <!-- Starter suggestions: 3 buttons matching JS object (WCAG fix) -->
+          <div class="suggestion-list" id="suggestions" role="region" aria-label="Vorgeschlagene Einstiegsfragen">
+            <p class="section-label" style="padding:0 0 2px;">Zum Einstieg</p>
+            <button class="suggestion-btn" onclick="startChat(this.textContent.trim())"
+                    aria-label="Frage stellen: Wie entwickle ich eine KI-Strategie für mein KMU?">
+              Wie entwickle ich eine KI-Strategie für mein KMU?
+            </button>
+            <button class="suggestion-btn" onclick="startChat(this.textContent.trim())"
+                    aria-label="Frage stellen: Welche Förderprogramme gibt es für die Transformation?">
+              Welche Förderprogramme gibt es für die Transformation?
+            </button>
+            <button class="suggestion-btn" onclick="startChat(this.textContent.trim())"
+                    aria-label="Frage stellen: Zeig mir den Selbstcheck für mein Unternehmen.">
+              Zeig mir den Selbstcheck für mein Unternehmen.
+            </button>
+          </div>
+
+          <!-- Input -->
+          <div class="welcome-input-section">
+            <div class="input-wrap">
+              <textarea class="chat-textarea"
+                        id="welcome-input"
+                        placeholder="Frage eingeben oder oben auswählen …"
+                        rows="1"
+                        aria-label="Nachricht eingeben"
+                        aria-describedby="welcome-hint"
+                        oninput="autoResize(this); updateCounter(this, 'welcome-counter')"
+                        onkeydown="handleKey(event, 'welcome-input')"></textarea>
+              <button class="send-btn"
+                      onclick="startChat(document.getElementById('welcome-input').value)"
+                      aria-label="Nachricht senden (Enter)"
+                      disabled id="welcome-send">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              </button>
+            </div>
+            <div class="input-meta">
+              <span class="input-hint" id="welcome-hint">
+                <kbd>Enter</kbd> senden · <kbd>Shift+Enter</kbd> neue Zeile
+              </span>
+              <span class="char-counter" id="welcome-counter" aria-live="polite"></span>
+            </div>
+          </div>
+
+          <footer class="privacy-footer" role="contentinfo">
+            Keine Registrierung · <a href="#" aria-label="Datenschutzerklärung öffnen">Datenschutz</a> · <a href="#" aria-label="Impressum öffnen">Impressum</a>
+          </footer>
+
+        </div><!-- /.widget -->
+      </div><!-- /.stage -->
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════════════
+         TAB 2: CHAT-ANSICHT
+    ══════════════════════════════════════════════════════════════ -->
+    <section class="tab-panel" id="tab-chat" role="tabpanel" aria-labelledby="tab-btn-chat">
+      <p class="stage-note">Widget-Vorschau · Desktop · Aktive Unterhaltung</p>
+      <div class="stage">
+        <div class="widget" role="dialog" aria-modal="false"
+             aria-label="Transform-Assistent – Chatbot jetzt-transformieren.de"
+             aria-describedby="ai-disclosure-text-2">
+
+          <!-- Header -->
+          <div class="w-head">
+            <div class="w-head-avatar" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/><path d="M18 14l2 2 4-4"/></svg>
+            </div>
+            <div class="w-head-info">
+              <div class="w-head-name">Transform-Assistent</div>
+              <div class="w-head-status">
+                <span class="status-dot" aria-hidden="true"></span>
+                <span class="status-text">Online</span>
+                <span class="role-badge" aria-label="Aktive Rolle: Geschäftsführung">Geschäftsführung</span>
+              </div>
+            </div>
+            <div class="w-head-actions">
+              <button class="head-btn" aria-label="Neue Unterhaltung starten">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-5"/></svg>
+              </button>
+              <button class="head-btn" aria-label="Chat schließen">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Disclosure strip -->
+          <aside class="ai-disclosure" role="note" aria-label="KI-System-Hinweis">
+            <svg class="ai-disclosure-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            <span class="ai-disclosure-text" id="ai-disclosure-text-2">
+              <strong>KI-Assistent</strong> · Antworten können fehlerhaft sein. Quellen werden angegeben.
+            </span>
+          </aside>
+
+          <!-- Chat Transcript -->
+          <div class="chat-body"
+               id="chat-transcript"
+               role="log"
+               aria-live="polite"
+               aria-label="Chatverlauf"
+               aria-relevant="additions"
+               tabindex="0"
+               style="height:420px;">
+
+            <div class="date-divider" aria-hidden="true">Heute</div>
+
+            <div class="msg-system" role="status">
+              Unterhaltung gestartet · Rolle: Geschäftsführung
+            </div>
+
+            <!-- User message 1 -->
+            <div class="msg-user">
+              <div>
+                <div class="bubble-user">
+                  Wie entwickle ich eine KI-Strategie für mein KMU in der Automobilzulieferbranche?
+                </div>
+                <div class="bubble-meta" aria-label="Gesendet um 10:41 Uhr">10:41</div>
+              </div>
+            </div>
+
+            <!-- AI response: RAG — data-ai-generated (EU AI Act, WCAG fix) -->
+            <div class="msg-ai">
+              <article class="ai-card"
+                       aria-label="Antwort des Transform-Assistenten"
+                       data-ai-generated="true"
+                       data-ai-model="transform-assistant-v1">
+                <div class="ai-card-header">
+                  <div class="ai-avatar-sm" aria-hidden="true" style="background:var(--navy);">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
+                  </div>
+                  <span class="ai-card-sender">Transform-Assistent</span>
+                  <span class="msg-badge badge-rag" aria-label="Antworttyp: Wissensabruf">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    Wissen
+                  </span>
+                  <!-- datetime corrected to 2026 (WCAG fix) -->
+                  <time class="msg-time" datetime="2026-03-19T10:41">10:41</time>
+                </div>
+                <div class="ai-card-body">
+                  <h4>KI-Strategie für KMU: Ein strukturierter Einstieg</h4>
+                  <p>Eine belastbare KI-Strategie entsteht nicht am Reißbrett – sie wächst aus dem Unternehmensalltag. Für Automobilzulieferer empfiehlt die Plattform einen dreistufigen Ansatz:</p>
+                  <ul>
+                    <li><strong>Standortbestimmung:</strong> Nutzung des Selbstchecks zur Analyse Ihres digitalen Reifegrads</li>
+                    <li><strong>Anwendungsfälle identifizieren:</strong> Qualitätssicherung, Predictive Maintenance und Lieferketten eignen sich als Einstieg</li>
+                    <li><strong>Kompetenzaufbau:</strong> Mitarbeiter früh einbinden – Qualifizierungspfade auf der Plattform nutzen</li>
+                  </ul>
+                </div>
+
+                <button class="sources-toggle"
+                        onclick="toggleSources(this)"
+                        aria-expanded="false"
+                        aria-controls="sources-1">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  2 Quellen
+                  <span class="chevron" aria-hidden="true">▾</span>
+                </button>
+                <div class="sources-body" id="sources-1" role="region" aria-label="Quellenangaben">
+                  <div class="sources-inner">
+                    <a href="#" class="source-item" aria-label="Quelle 1: KI im Mittelstand – Praxisleitfaden">
+                      <span class="source-num" aria-hidden="true">1</span>
+                      <span class="source-info">
+                        <span class="source-title">KI im Mittelstand – Praxisleitfaden</span>
+                        <span class="source-url">jetzt-transformieren.de/wissen/ki-mittelstand</span>
+                      </span>
+                    </a>
+                    <a href="#" class="source-item" aria-label="Quelle 2: Fallstudie: Digitalisierung in der Automobilzulieferung">
+                      <span class="source-num" aria-hidden="true">2</span>
+                      <span class="source-info">
+                        <span class="source-title">Fallstudie: Digitalisierung Automobilzulieferung</span>
+                        <span class="source-url">jetzt-transformieren.de/wissen/fallstudien/auto</span>
+                      </span>
+                    </a>
+                  </div>
+                </div>
+
+                <div class="feedback-bar" role="group" aria-label="Antwort bewerten">
+                  <span class="feedback-label" id="fb-label-1">Hilfreich?</span>
+                  <button class="fb-btn" aria-pressed="false" aria-labelledby="fb-label-1" aria-label="Daumen hoch"
+                          onclick="toggleFeedback(this, 'pos')">👍</button>
+                  <button class="fb-btn" aria-pressed="false" aria-labelledby="fb-label-1" aria-label="Daumen runter"
+                          onclick="toggleFeedback(this, 'neg')">👎</button>
+                  <div class="fb-divider" aria-hidden="true"></div>
+                  <button class="reflect-trigger" aria-label="Reflexionsfrage anzeigen">
+                    💡 Reflektieren
+                  </button>
+                </div>
+              </article>
+            </div>
+
+            <!-- User message 2 -->
+            <div class="msg-user">
+              <div>
+                <div class="bubble-user">Gibt es auch passende Qualifizierungsmaßnahmen dazu?</div>
+                <div class="bubble-meta" aria-label="Gesendet um 10:42 Uhr">10:42</div>
+              </div>
+            </div>
+
+            <!-- AI response: Navigation type -->
+            <div class="msg-ai">
+              <article class="ai-card"
+                       aria-label="Navigationsempfehlung des Transform-Assistenten"
+                       data-ai-generated="true"
+                       data-ai-model="transform-assistant-v1">
+                <div class="ai-card-header">
+                  <!-- Blue avatar = nav type indicator (no left border in v6) -->
+                  <div class="ai-avatar-sm" style="background:var(--blue);" aria-hidden="true">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                  </div>
+                  <span class="ai-card-sender">Transform-Assistent</span>
+                  <span class="msg-badge badge-nav" aria-label="Antworttyp: Navigation">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+                    Navigation
+                  </span>
+                  <time class="msg-time" datetime="2026-03-19T10:42">10:42</time>
+                </div>
+                <div class="ai-card-body">
+                  <p>Ja – die Plattform bietet passende Angebote für Ihre Situation als Geschäftsführung:</p>
+                  <div class="nav-links" role="list">
+                    <a href="#" class="nav-link-btn" role="listitem" aria-label="Lernreise Digitale Transformation öffnen">
+                      <svg class="nav-link-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 14"/><path d="M3 4l18 16"/></svg>
+                      Lernreise: Digitale Transformation
+                    </a>
+                    <a href="#" class="nav-link-btn" role="listitem" aria-label="KI-Grundlagen für Führungskräfte öffnen">
+                      <svg class="nav-link-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+                      KI-Grundlagen für Führungskräfte
+                    </a>
+                    <a href="#" class="nav-link-btn" role="listitem" aria-label="Selbstcheck: Digitaler Reifegrad starten">
+                      <svg class="nav-link-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                      Selbstcheck: Digitaler Reifegrad
+                    </a>
+                  </div>
+                </div>
+                <div class="feedback-bar" role="group" aria-label="Empfehlung bewerten">
+                  <span class="feedback-label" id="fb-label-2">Hilfreich?</span>
+                  <button class="fb-btn active-pos" aria-pressed="true" aria-labelledby="fb-label-2" aria-label="Als hilfreich markiert">👍</button>
+                  <button class="fb-btn" aria-pressed="false" aria-labelledby="fb-label-2" aria-label="Als nicht hilfreich markieren">👎</button>
+                </div>
+              </article>
+            </div>
+
+            <!-- Typing indicator -->
+            <div class="typing-indicator" role="status" aria-label="Transform-Assistent schreibt …" aria-live="polite">
+              <div class="typing-dots" aria-hidden="true">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+              </div>
+              <span class="typing-text">schreibt …</span>
+            </div>
+
+          </div><!-- /.chat-body -->
+
+          <!-- Quick replies -->
+          <nav class="quick-replies" aria-label="Vorschläge für Folgefragen">
+            <button class="qr-btn" aria-label="Frage stellen: Was kostet eine KI-Einführung?">Was kostet das?</button>
+            <button class="qr-btn" aria-label="Frage stellen: Wie lange dauert die Transformation?">Zeitrahmen?</button>
+            <button class="qr-btn" aria-label="Frage stellen: Welche Risiken gibt es?">Risiken</button>
+            <button class="qr-btn" aria-label="Frage stellen: Erfolgsbeispiele aus der Branche">Erfolgsbeispiele</button>
+          </nav>
+
+          <!-- Input -->
+          <div class="chat-footer">
+            <div class="input-wrap">
+              <textarea class="chat-textarea"
+                        id="chat-input"
+                        placeholder="Ihre Frage …"
+                        rows="1"
+                        aria-label="Nachricht eingeben"
+                        aria-describedby="chat-hint"
+                        aria-multiline="true"
+                        oninput="autoResize(this); updateCounter(this, 'chat-counter')"
+                        onkeydown="handleKey(event, 'chat-input')"></textarea>
+              <button class="send-btn" id="chat-send" aria-label="Nachricht senden" disabled>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              </button>
+            </div>
+            <div class="input-meta">
+              <span class="input-hint" id="chat-hint"><kbd>Enter</kbd> senden</span>
+              <span class="char-counter" id="chat-counter" aria-live="polite" aria-atomic="true"></span>
+            </div>
+          </div>
+
+        </div><!-- /.widget -->
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════════════
+         TAB 3: ZUSTÄNDE
+    ══════════════════════════════════════════════════════════════ -->
+    <section class="tab-panel" id="tab-states" role="tabpanel" aria-labelledby="tab-btn-states">
+      <div class="states-grid">
+
+        <!-- State: FAQ Cache Hit -->
+        <div>
+          <p class="state-label">FAQ-Treffer (kein LLM)</p>
+          <div class="state-card">
+            <!-- White header + orange strip via inline style -->
+            <div class="w-head" style="padding:10px 14px 10px 17px;">
+              <div class="w-head-avatar" style="width:30px;height:30px;" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
+              </div>
+              <div class="w-head-info">
+                <div class="w-head-name" style="font-size:13px;">Transform-Assistent</div>
+                <div class="status-text" style="font-size:10.5px;">Online</div>
+              </div>
+            </div>
+            <div style="padding:10px 12px;background:var(--surface-2);display:flex;flex-direction:column;gap:8px;">
+              <div class="msg-user">
+                <div class="bubble-user" style="font-size:12px;">Was ist der Selbstcheck?</div>
+              </div>
+              <div class="msg-ai">
+                <article class="ai-card" aria-label="FAQ-Antwort"
+                         data-ai-generated="true" data-ai-model="transform-assistant-v1">
+                  <div class="ai-card-header" style="padding:8px 12px 5px;">
+                    <div class="ai-avatar-sm" style="width:16px;height:16px;background:var(--green);" aria-hidden="true">
+                      <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <span style="font-size:11px;font-weight:700;color:var(--navy);">Transform-Assistent</span>
+                    <span class="msg-badge badge-faq" style="font-size:10px;">⚡ FAQ</span>
+                  </div>
+                  <div class="ai-card-body" style="padding:0 12px 8px;">
+                    <p style="font-size:12px;">Der <strong>Selbstcheck</strong> ist ein kostenfreies Online-Tool zur Standortbestimmung – er bewertet den digitalen Reifegrad Ihres Unternehmens in ca. 10 Minuten.</p>
+                    <div class="nav-links" style="margin-top:7px;">
+                      <a href="#" class="nav-link-btn" style="font-size:11.5px;padding:6px 10px;" aria-label="Selbstcheck starten">
+                        <svg class="nav-link-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="9 11 12 14 22 4"/></svg>
+                        Selbstcheck starten →
+                      </a>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- State: LLM-Ausfall -->
+        <div>
+          <p class="state-label">LLM-Ausfall · Fallback aktiv</p>
+          <div class="state-card">
+            <div class="w-head" style="padding:10px 14px 10px 17px;">
+              <div class="w-head-avatar" style="width:30px;height:30px;" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
+              </div>
+              <div class="w-head-info">
+                <div class="w-head-name" style="font-size:13px;">Transform-Assistent</div>
+                <div class="status-text" style="font-size:10.5px;">Eingeschränkter Betrieb</div>
+              </div>
+            </div>
+            <div role="alert" class="alert-strip warn" aria-live="assertive">
+              <span class="alert-icon" aria-hidden="true">⚠️</span>
+              <span><strong>Eingeschränkter Betrieb.</strong> Die KI-Funktion ist vorübergehend nicht verfügbar. FAQ und Direktlinks funktionieren weiterhin.</span>
+            </div>
+            <div style="padding:10px 12px;background:var(--surface-2);display:flex;flex-direction:column;gap:8px;">
+              <div class="msg-ai">
+                <article class="ai-card" aria-label="Systemmeldung"
+                         data-ai-generated="true" data-ai-model="transform-assistant-v1">
+                  <div class="ai-card-body" style="padding:10px 12px 8px;">
+                    <p style="font-size:12px;color:var(--text-2);">Detaillierte KI-Antworten sind gerade nicht möglich. Ich kann Ihnen trotzdem helfen:</p>
+                    <div class="contact-card" style="margin:8px 0 0;">
+                      <div class="contact-card-title">Persönliche Beratung</div>
+                      <a href="mailto:info@f-bb.de" class="contact-link" aria-label="E-Mail senden an info@f-bb.de">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        info@f-bb.de
+                      </a>
+                      <a href="tel:+4991112345678" class="contact-link" aria-label="Telefon 0911 12345-678 anrufen">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 14a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 3.18H6.6a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81"/></svg>
+                        0911 12345-678
+                      </a>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- State: Reflexion -->
+        <div>
+          <p class="state-label">Reflexions-Modus</p>
+          <div class="state-card">
+            <div class="w-head" style="padding:10px 14px 10px 17px;">
+              <div class="w-head-avatar" style="width:30px;height:30px;" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
+              </div>
+              <div class="w-head-info">
+                <div class="w-head-name" style="font-size:13px;">Transform-Assistent</div>
+                <div class="status-text" style="font-size:10.5px;">Reflexionsmodus aktiv</div>
+              </div>
+            </div>
+            <div style="padding:10px 12px;background:var(--surface-2);display:flex;flex-direction:column;gap:8px;">
+              <div class="msg-ai">
+                <article class="ai-card" aria-label="Reflexionsfrage des Assistenten"
+                         data-ai-generated="true" data-ai-model="transform-assistant-v1">
+                  <div class="ai-card-header" style="padding:8px 12px 5px;">
+                    <div class="ai-avatar-sm" style="width:16px;height:16px;background:#7c3aed;" aria-hidden="true">
+                      <span aria-hidden="true" style="font-size:8px;">💡</span>
+                    </div>
+                    <span style="font-size:11px;font-weight:700;color:#5b21b6;">Transform-Assistent</span>
+                    <span class="msg-badge badge-reflect" style="font-size:10px;">Reflexion</span>
+                  </div>
+                  <div class="ai-card-body" style="padding:0 12px 10px;">
+                    <p style="font-size:12px;color:var(--text-2);">Das ist ein wichtiger Schritt. Lassen Sie mich eine Frage stellen:</p>
+                    <blockquote class="reflect-block" style="font-size:12.5px;">
+                      Wenn Sie in zwei Jahren zurückblicken – an welchem konkreten Ergebnis würden Sie erkennen, dass die KI-Einführung erfolgreich war?
+                    </blockquote>
+                  </div>
+                  <div class="feedback-bar" style="padding:4px 12px 8px;">
+                    <button class="fb-btn" aria-label="Andere Reflexionsfrage anzeigen">🔄</button>
+                    <button class="fb-btn" style="font-size:12px;color:var(--muted);" aria-label="Reflexion beenden">✕ Beenden</button>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- State: Niedrige Konfidenz -->
+        <div>
+          <p class="state-label">Niedrige Konfidenz</p>
+          <div class="state-card">
+            <div class="w-head" style="padding:10px 14px 10px 17px;">
+              <div class="w-head-avatar" style="width:30px;height:30px;" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
+              </div>
+              <div class="w-head-info">
+                <div class="w-head-name" style="font-size:13px;">Transform-Assistent</div>
+              </div>
+            </div>
+            <div style="padding:10px 12px;background:var(--surface-2);display:flex;flex-direction:column;gap:8px;">
+              <div class="msg-user">
+                <div class="bubble-user" style="font-size:12px;">Welche Steueroptimierungen gibt es für mein Unternehmen?</div>
+              </div>
+              <div class="msg-ai">
+                <article class="ai-card" aria-label="Antwort mit Weiterleitungshinweis"
+                         data-ai-generated="true" data-ai-model="transform-assistant-v1">
+                  <div class="ai-card-header" style="padding:8px 12px 5px;">
+                    <span style="font-size:11px;font-weight:700;color:var(--navy);">Transform-Assistent</span>
+                    <span class="msg-badge badge-warn" style="font-size:10px;">⚠ Außerhalb Thema</span>
+                  </div>
+                  <div class="ai-card-body" style="padding:0 12px 8px;">
+                    <p style="font-size:12px;">Steuerliche Beratung liegt außerhalb meines Themenbereichs. Ich bin spezialisiert auf <strong>digitale Transformation in KMU</strong>.</p>
+                    <p style="font-size:11.5px;margin-top:6px;color:var(--muted);">Kann ich Ihnen stattdessen zu Förderprogrammen für Digitalisierung weiterhelfen?</p>
+                  </div>
+                  <div style="padding:0 12px 10px;display:flex;gap:6px;flex-wrap:wrap;">
+                    <button class="nav-link-btn" style="font-size:11.5px;padding:5px 10px;" aria-label="Ja, Förderprogramme zeigen">Ja, Förderprogramme →</button>
+                    <button class="nav-link-btn" style="font-size:11.5px;padding:5px 10px;border-color:var(--border);color:var(--muted);" aria-label="Neue Frage stellen">Neue Frage</button>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /.states-grid -->
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════════════
+         TAB 4: MOBIL
+    ══════════════════════════════════════════════════════════════ -->
+    <section class="tab-panel" id="tab-mobile" role="tabpanel" aria-labelledby="tab-btn-mobile">
+      <p class="stage-note">Smartphone-Ansicht · 375 px</p>
+      <div class="mobile-device" role="img" aria-label="Smartphone-Vorschau des Chat-Widgets">
+        <div class="mobile-notch">
+          <div class="mobile-notch-bar"></div>
+        </div>
+
+        <div class="mobile-widget">
+          <!-- White header + orange strip (v6 design) -->
+          <div class="w-head">
+            <div class="w-head-avatar" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
+            </div>
+            <div class="w-head-info">
+              <div class="w-head-name">Transform-Assistent</div>
+              <div class="w-head-status">
+                <span class="status-dot" aria-hidden="true"></span>
+                <span class="status-text">Online</span>
+              </div>
+            </div>
+            <div class="w-head-actions">
+              <button class="head-btn" aria-label="Chat schließen">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <aside class="ai-disclosure">
+            <svg class="ai-disclosure-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            <span class="ai-disclosure-text" style="font-size:10.5px;">
+              <strong>KI-Assistent</strong> · Quellenangaben bei jeder Antwort.
+            </span>
+          </aside>
+
+          <div style="flex:1;overflow-y:auto;background:var(--surface-2);padding:12px;display:flex;flex-direction:column;gap:9px;">
+            <div class="date-divider" style="font-size:10.5px;" aria-hidden="true">Heute</div>
+            <div class="msg-user">
+              <div class="bubble-user" style="font-size:13px;max-width:80%;">Welche Lernreisen gibt es?</div>
+            </div>
+            <div class="msg-ai">
+              <article class="ai-card"
+                       data-ai-generated="true" data-ai-model="transform-assistant-v1">
+                <div class="ai-card-header" style="padding:9px 12px 6px;">
+                  <div class="ai-avatar-sm" style="width:16px;height:16px;background:var(--blue);" aria-hidden="true">
+                    <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="9 18 15 12 9 6"/></svg>
+                  </div>
+                  <span style="font-size:11.5px;font-weight:700;color:var(--navy);">Transform-Assistent</span>
+                  <span class="msg-badge badge-nav" style="font-size:10px;">Navigation</span>
+                  <time class="msg-time" datetime="2026-03-19T10:15" style="opacity:1;">10:15</time>
+                </div>
+                <div class="ai-card-body" style="padding:0 12px 8px;">
+                  <p style="font-size:12.5px;">Aktuell stehen drei Lernreisen zur Auswahl:</p>
+                  <div class="nav-links">
+                    <a href="#" class="nav-link-btn" style="font-size:12px;" aria-label="Lernreise Künstliche Intelligenz öffnen">
+                      <svg class="nav-link-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+                      Künstliche Intelligenz
+                    </a>
+                    <a href="#" class="nav-link-btn" style="font-size:12px;" aria-label="Lernreise New Work öffnen">
+                      <svg class="nav-link-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+                      New Work &amp; agile Arbeit
+                    </a>
+                    <a href="#" class="nav-link-btn" style="font-size:12px;" aria-label="Lernreise Nachhaltige Transformation öffnen">
+                      <svg class="nav-link-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+                      Nachhaltige Transformation
+                    </a>
+                  </div>
+                </div>
+                <div class="feedback-bar" style="padding:5px 12px 8px;">
+                  <button class="fb-btn" aria-label="Hilfreich">👍</button>
+                  <button class="fb-btn" aria-label="Nicht hilfreich">👎</button>
+                </div>
+              </article>
+            </div>
+            <div class="typing-indicator" style="padding:8px 12px;">
+              <div class="typing-dots" aria-hidden="true">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+              </div>
+              <span class="typing-text" style="font-size:11.5px;">schreibt …</span>
+            </div>
+          </div>
+
+          <div class="quick-replies" style="padding:7px 12px;">
+            <button class="qr-btn" style="font-size:11.5px;" aria-label="Welche Lernreise passt zu mir?">Welche passt zu mir?</button>
+            <button class="qr-btn" style="font-size:11.5px;" aria-label="Lernreise-Dauer erfragen">Wie lange?</button>
+          </div>
+
+          <div class="chat-footer" style="padding:8px 10px 10px;">
+            <div class="input-wrap">
+              <textarea class="chat-textarea" placeholder="Nachricht …" rows="1"
+                        aria-label="Nachricht eingeben" style="font-size:14px;"></textarea>
+              <button class="send-btn" aria-label="Senden" disabled style="width:38px;height:38px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mobile-home-bar">
+          <div class="mobile-home-pill"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════
+         TAB 5: ADMIN-OBERFLÄCHE
+    ══════════════════════════════════════════════════════════════ -->
+    <section class="tab-panel" id="tab-admin" role="tabpanel" aria-labelledby="tab-btn-admin">
+      <p class="stage-note">Administrations- und Redaktionsoberfläche · Entwurf</p>
+      <div class="admin-shell">
+
+        <!-- ── Sidebar (white bg, orange active bar — v6) ── -->
+        <nav class="admin-sidebar" aria-label="Admin-Navigation">
+          <div class="admin-sidebar-logo">
+            <div class="admin-sidebar-logo-dot" aria-hidden="true"></div>
+            Admin-Oberfläche
+          </div>
+          <span class="admin-sidebar-label">Übersicht</span>
+          <button class="admin-nav-btn active" onclick="showAdminSection('dashboard')" id="anav-dashboard">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            Dashboard
+          </button>
+          <span class="admin-sidebar-label">Inhalte</span>
+          <button class="admin-nav-btn" onclick="showAdminSection('faq')" id="anav-faq">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+            FAQ-Verwaltung
+          </button>
+          <button class="admin-nav-btn" onclick="showAdminSection('reflexion')" id="anav-reflexion">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Reflexionsfragen
+          </button>
+          <button class="admin-nav-btn" onclick="showAdminSection('wissensbasis')" id="anav-wissensbasis">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Wissensbasis
+          </button>
+          <span class="admin-sidebar-label">Konfiguration</span>
+          <button class="admin-nav-btn" onclick="showAdminSection('prompts')" id="anav-prompts">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+            System-Prompts
+          </button>
+          <button class="admin-nav-btn" onclick="showAdminSection('monitoring')" id="anav-monitoring">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            Monitoring / Logs
+          </button>
+          <div class="admin-nav-spacer"></div>
+          <div class="admin-nav-divider" aria-hidden="true"></div>
+          <button class="admin-nav-btn signout" onclick="void(0)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Abmelden
+          </button>
+        </nav>
+
+        <!-- ── Main content ── -->
+        <div class="admin-main">
+
+          <!-- DASHBOARD -->
+          <div class="admin-section active" id="asec-dashboard">
+            <div class="admin-topbar">
+              <div>
+                <h2>Dashboard</h2>
+                <div class="admin-topbar-meta">Letzte Aktualisierung: heute, 14:32 Uhr</div>
+              </div>
+              <button class="btn-secondary">Statistiken exportieren</button>
+            </div>
+            <div class="kpi-grid">
+              <div class="kpi-card">
+                <div class="kpi-label">Dialoge heute</div>
+                <div class="kpi-value">47</div>
+                <div class="kpi-delta up">↑ 12 % vs. gestern</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">FAQ-Trefferquote</div>
+                <div class="kpi-value">68 %</div>
+                <div class="kpi-delta warn">Ziel: 70 % — knapp darunter</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Nutzer-Feedback positiv</div>
+                <div class="kpi-value">84 %</div>
+                <div class="kpi-delta up">↑ 3 % vs. Vorwoche</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Ø Antwortzeit</div>
+                <div class="kpi-value">1.4 s</div>
+                <div class="kpi-delta neutral">Innerhalb Zielwert (&lt; 3 s)</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Filterauslösungen heute</div>
+                <div class="kpi-value">3</div>
+                <div class="kpi-delta neutral">Input: 2 · Output: 1</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Verfügbarkeit (7 Tage)</div>
+                <div class="kpi-value">99.8 %</div>
+                <div class="kpi-delta up">Kein Ausfall</div>
+              </div>
+            </div>
+
+            <div class="admin-card">
+              <div class="admin-card-header">
+                <div>
+                  <div class="admin-card-title">Dialoge der letzten 7 Tage</div>
+                  <div class="admin-card-subtitle">Tageswerte · heute hervorgehoben</div>
+                </div>
+              </div>
+              <div class="sparkline-row" aria-label="Balkendiagramm Dialoge letzte 7 Tage" role="img">
+                <div class="spark-bar" style="height:50%;" title="Mo: 31"></div>
+                <div class="spark-bar" style="height:65%;" title="Di: 40"></div>
+                <div class="spark-bar" style="height:55%;" title="Mi: 34"></div>
+                <div class="spark-bar" style="height:75%;" title="Do: 46"></div>
+                <div class="spark-bar" style="height:60%;" title="Fr: 37"></div>
+                <div class="spark-bar" style="height:40%;" title="Sa: 24"></div>
+                <div class="spark-bar today" style="height:76%;" title="So (heute): 47"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:0 18px 12px;font-size:10.5px;color:var(--muted);">
+                <span>Mo</span><span>Di</span><span>Mi</span><span>Do</span><span>Fr</span><span>Sa</span>
+                <span style="color:var(--navy);font-weight:700;">Heute</span>
+              </div>
+            </div>
+
+            <div class="admin-card">
+              <div class="admin-card-header">
+                <div>
+                  <div class="admin-card-title">Letzte Anfragen</div>
+                  <div class="admin-card-subtitle">Heute · pseudonymisiert · Auto-Löschung nach 24 h</div>
+                </div>
+                <button class="btn-secondary" style="font-size:12px;">Alle anzeigen</button>
+              </div>
+              <table class="admin-table" aria-label="Letzte Nutzeranfragen (pseudonymisiert)">
+                <thead>
+                  <tr>
+                    <th scope="col">Session-ID</th>
+                    <th scope="col">Typ</th>
+                    <th scope="col">Nutzergruppe</th>
+                    <th scope="col">Feedback</th>
+                    <th scope="col">Zeit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code style="font-size:11px;color:var(--muted);">7f3e2a1</code></td>
+                    <td><span class="admin-badge rag">Wissen</span></td>
+                    <td>Geschäftsführung</td>
+                    <td>👍</td>
+                    <td style="color:var(--muted);font-size:12px;">14:28</td>
+                  </tr>
+                  <tr>
+                    <td><code style="font-size:11px;color:var(--muted);">b8c4d5e</code></td>
+                    <td><span class="admin-badge nav">Navigation</span></td>
+                    <td>Führungskraft</td>
+                    <td>👍</td>
+                    <td style="color:var(--muted);font-size:12px;">14:19</td>
+                  </tr>
+                  <tr>
+                    <td><code style="font-size:11px;color:var(--muted);">9a1f6c3</code></td>
+                    <td><span class="admin-badge faq">FAQ</span></td>
+                    <td>Sonstige</td>
+                    <td style="color:var(--muted);">—</td>
+                    <td style="color:var(--muted);font-size:12px;">14:07</td>
+                  </tr>
+                  <tr>
+                    <td><code style="font-size:11px;color:var(--muted);">4e2b8a7</code></td>
+                    <td><span class="admin-badge warn">Filter</span></td>
+                    <td>Personalmanagement</td>
+                    <td style="color:var(--muted);">—</td>
+                    <td style="color:var(--muted);font-size:12px;">13:52</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p style="font-size:11px;color:var(--muted);margin-top:6px;padding:0 2px;">Anfrageinhalte werden nicht gespeichert. Logs werden täglich um 00:00 Uhr automatisch gelöscht (DSGVO Art. 5 Abs. 1 lit. e).</p>
+            </div>
+
+            <div class="admin-card">
+              <div class="admin-card-header">
+                <div class="admin-card-title">Wissensbasis</div>
+                <span class="admin-badge ok">Aktuell</span>
+              </div>
+              <div class="kb-status">
+                <div class="kb-status-info">
+                  <strong>312 Dokumente</strong> indexiert · 4.847 Chunks in der Vektordatenbank
+                  <div class="kb-status-time">Letztes Update: Do, 19.03.2026 · 03:14 Uhr (Cron-Job)</div>
+                </div>
+                <button class="btn-primary">Jetzt aktualisieren</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ-VERWALTUNG -->
+          <div class="admin-section" id="asec-faq">
+            <div class="admin-topbar">
+              <div>
+                <h2>FAQ-Verwaltung</h2>
+                <div class="admin-topbar-meta">24 Einträge · zuletzt bearbeitet vor 3 Tagen</div>
+              </div>
+              <button class="btn-primary">+ Neuer Eintrag</button>
+            </div>
+            <div class="admin-card">
+              <div class="admin-card-header">
+                <div class="admin-card-title">Alle FAQ-Einträge</div>
+                <input type="search" placeholder="Suchen …"
+                       style="padding:6px 12px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;font-family:var(--font);outline:none;width:200px;"
+                       aria-label="FAQ durchsuchen">
+              </div>
+              <table class="admin-table" aria-label="FAQ-Einträge">
+                <thead>
+                  <tr>
+                    <th scope="col" style="width:30%;">Frage</th>
+                    <th scope="col" style="width:35%;">Antwort (Vorschau)</th>
+                    <th scope="col">Kategorie</th>
+                    <th scope="col">Aktionen</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="trunc" style="max-width:180px;font-weight:600;color:var(--navy-deep);">Was ist der Selbstcheck?</td>
+                    <td class="trunc" style="max-width:210px;">Der Selbstcheck ist ein kostenfreies Online-Tool zur Standortbestimmung …</td>
+                    <td><span class="admin-badge nav">Navigation</span></td>
+                    <td style="white-space:nowrap;display:flex;gap:6px;">
+                      <button class="btn-secondary" style="font-size:11.5px;padding:4px 10px;">Bearbeiten</button>
+                      <button class="btn-danger">Löschen</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="trunc" style="max-width:180px;font-weight:600;color:var(--navy-deep);">Welche Lernreisen gibt es?</td>
+                    <td class="trunc" style="max-width:210px;">Aktuell stehen drei Lernreisen zur Verfügung: Künstliche Intelligenz, New Work …</td>
+                    <td><span class="admin-badge nav">Navigation</span></td>
+                    <td style="white-space:nowrap;display:flex;gap:6px;">
+                      <button class="btn-secondary" style="font-size:11.5px;padding:4px 10px;">Bearbeiten</button>
+                      <button class="btn-danger">Löschen</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <!-- WCAG fix: corrected "Bavarian platform" → "bayerische Plattform" -->
+                    <td class="trunc" style="max-width:180px;font-weight:600;color:var(--navy-deep);">Was ist jetzt-transformieren.de?</td>
+                    <td class="trunc" style="max-width:210px;">jetzt-transformieren.de ist eine bayerische Plattform für KMU der Automobilbranche …</td>
+                    <td><span class="admin-badge rag">Wissen</span></td>
+                    <td style="white-space:nowrap;display:flex;gap:6px;">
+                      <button class="btn-secondary" style="font-size:11.5px;padding:4px 10px;">Bearbeiten</button>
+                      <button class="btn-danger">Löschen</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div style="padding:12px 16px;font-size:12px;color:var(--muted);border-top:1px solid var(--border-2);">
+                Zeige 3 von 24 Einträgen · <a href="#" style="color:var(--blue);">Alle anzeigen</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- REFLEXIONSFRAGEN -->
+          <div class="admin-section" id="asec-reflexion">
+            <div class="admin-topbar">
+              <div>
+                <h2>Reflexionsfragen</h2>
+                <div class="admin-topbar-meta">Kuratierter Katalog · 38 Fragen in 4 Themenfeldern</div>
+              </div>
+              <button class="btn-primary">+ Neue Frage</button>
+            </div>
+            <div class="admin-card">
+              <div class="admin-card-header">
+                <div class="admin-card-title">Themenfeld: KI-Strategie</div>
+                <span style="font-size:12px;color:var(--muted);">12 Fragen</span>
+              </div>
+              <table class="admin-table" aria-label="Reflexionsfragen KI-Strategie">
+                <thead>
+                  <tr><th scope="col" style="width:55%;">Frage</th><th scope="col">Nutzergruppe</th><th scope="col">Aktionen</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="font-size:13px;color:var(--text-2);">Wenn Sie in zwei Jahren zurückblicken – an welchem Ergebnis würden Sie erkennen, dass die KI-Einführung erfolgreich war?</td>
+                    <td><span class="admin-badge rag" style="font-size:10px;">Geschäftsführung</span></td>
+                    <td style="white-space:nowrap;display:flex;gap:6px;">
+                      <button class="btn-secondary" style="font-size:11.5px;padding:4px 10px;">Bearbeiten</button>
+                      <button class="btn-danger">Löschen</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="font-size:13px;color:var(--text-2);">Welche Mitarbeiterinnen und Mitarbeiter würden Sie als „KI-Pioniere" in Ihrem Team bezeichnen?</td>
+                    <td><span class="admin-badge reflect" style="font-size:10px;">Alle</span></td>
+                    <td style="white-space:nowrap;display:flex;gap:6px;">
+                      <button class="btn-secondary" style="font-size:11.5px;padding:4px 10px;">Bearbeiten</button>
+                      <button class="btn-danger">Löschen</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- WISSENSBASIS -->
+          <div class="admin-section" id="asec-wissensbasis">
+            <div class="admin-topbar">
+              <div>
+                <h2>Wissensbasis</h2>
+                <div class="admin-topbar-meta">Dokumente und Quellen verwalten</div>
+              </div>
+              <button class="btn-primary">Dokument hochladen</button>
+            </div>
+            <div class="admin-card">
+              <div class="admin-card-header">
+                <div class="admin-card-title">Indexierte Quellen</div>
+                <span class="admin-badge ok">312 Dokumente · aktuell</span>
+              </div>
+              <table class="admin-table" aria-label="Wissensbasis-Quellen">
+                <thead>
+                  <tr><th scope="col">Titel / URL</th><th scope="col">Typ</th><th scope="col">Chunks</th><th scope="col">Zuletzt indexiert</th><th scope="col">Status</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><div style="font-weight:600;font-size:13px;color:var(--navy-deep);">KI im Mittelstand – Praxisleitfaden</div><div style="font-size:11px;color:var(--muted);">jetzt-transformieren.de/wissen/ki-mittelstand</div></td>
+                    <td><span class="admin-badge rag">HTML</span></td>
+                    <td>24</td>
+                    <td style="font-size:12px;color:var(--muted);">19.03.2026</td>
+                    <td><span class="admin-badge ok">OK</span></td>
+                  </tr>
+                  <tr>
+                    <td><div style="font-weight:600;font-size:13px;color:var(--navy-deep);">Fallstudie Automobilzulieferung</div><div style="font-size:11px;color:var(--muted);">jetzt-transformieren.de/wissen/fallstudien/auto</div></td>
+                    <td><span class="admin-badge faq">PDF</span></td>
+                    <td>18</td>
+                    <td style="font-size:12px;color:var(--muted);">19.03.2026</td>
+                    <td><span class="admin-badge ok">OK</span></td>
+                  </tr>
+                  <tr>
+                    <td><div style="font-weight:600;font-size:13px;color:var(--navy-deep);">Lernreise: Neue Arbeitswelt</div><div style="font-size:11px;color:var(--muted);">jetzt-transformieren.de/lernreisen/new-work</div></td>
+                    <td><span class="admin-badge rag">HTML</span></td>
+                    <td>9</td>
+                    <td style="font-size:12px;color:var(--muted);">15.03.2026</td>
+                    <td><span class="admin-badge warn">Veraltet?</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- SYSTEM-PROMPTS -->
+          <div class="admin-section" id="asec-prompts">
+            <div class="admin-topbar">
+              <div>
+                <h2>System-Prompts</h2>
+                <div class="admin-topbar-meta">Tonalität, Verhaltensgrenzen und RAG-Anweisungen</div>
+              </div>
+            </div>
+            <div class="admin-card" style="padding:20px 22px;display:flex;flex-direction:column;gap:16px;">
+              <div class="admin-form-group">
+                <label class="admin-label" for="prompt-mode">Modus</label>
+                <select class="admin-select" id="prompt-mode">
+                  <option>Basis-Prompt (Charakter &amp; Grenzen)</option>
+                  <option>RAG-Prompt (quellenbasierte Antworten)</option>
+                  <option>Reflexions-Prompt (sokratische Führung)</option>
+                  <option>Fallback-Prompt (kein LLM)</option>
+                </select>
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-label" for="prompt-text">Prompt-Text</label>
+                <textarea class="admin-textarea-lg" id="prompt-text">Du bist der Transform-Assistent von jetzt-transformieren.de – ein KI-gestützter Chatbot für Führungskräfte und Personalverantwortliche in KMU der Automobilbranche.
+
+Deine Aufgaben:
+- Informationsvermittlung zu Themen der digitalen Transformation (quellenbasiert)
+- Navigation zu Plattformangeboten (Selbstcheck, Lernreisen, Qualifizierungsmaßnahmen)
+- Reflexionsförderung durch sokratische Rückfragen
+
+Verhaltensgrenzen:
+- Antworte ausschließlich auf Basis der bereitgestellten Dokumente
+- Kennzeichne Antworten, wenn die Wissensbasis keine belastbare Grundlage bietet
+- Gib niemals personenbezogene Daten weiter
+- Weise dich zu Beginn jedes Gesprächs als KI-System aus (EU AI Act Art. 50)</textarea>
+              </div>
+              <div style="display:flex;gap:10px;align-items:center;">
+                <button class="btn-primary">Änderungen speichern</button>
+                <button class="btn-secondary">Zurücksetzen</button>
+                <span style="font-size:11.5px;color:var(--muted);margin-left:4px;">Zuletzt geändert: 10.03.2026 · admin@f-bb.de</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- MONITORING -->
+          <div class="admin-section" id="asec-monitoring">
+            <div class="admin-topbar">
+              <div>
+                <h2>Monitoring &amp; Logs</h2>
+                <div class="admin-topbar-meta">DSGVO-konforme 4-Schicht-Protokollarchitektur · Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO</div>
+              </div>
+              <button class="btn-secondary">CSV-Export</button>
+            </div>
+
+            <!-- ── SCHICHT A: Aggregierte KPIs (dauerhaft, vollständig anonym) ── -->
+            <div class="log-layer">
+              <div class="log-layer-header log-layer-a">
+                <div style="display:flex;align-items:center;">
+                  <span class="log-layer-title">Schicht A — Aggregierte KPIs</span>
+                  <span class="log-layer-sub">Vollständig anonym · kein Personenbezug · keine DSGVO-Pflichten</span>
+                </div>
+                <span class="log-retention log-ret-forever">∞ Dauerhaft</span>
+              </div>
+              <div class="log-layer-body">
+                <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:0;">
+                  <div class="kpi-card" style="margin:0;">
+                    <div class="kpi-label">Filterauslösungen (7 Tage)</div>
+                    <div class="kpi-value">18</div>
+                    <div class="kpi-delta neutral">Input: 11 · Output: 7</div>
+                  </div>
+                  <div class="kpi-card" style="margin:0;">
+                    <div class="kpi-label">Feedback positiv gesamt</div>
+                    <div class="kpi-value">84 %</div>
+                    <div class="kpi-delta up">↑ 3 % vs. Vorwoche</div>
+                  </div>
+                  <div class="kpi-card" style="margin:0;">
+                    <div class="kpi-label">Feedback: FAQ-Typ</div>
+                    <div class="kpi-value">91 %</div>
+                    <div class="kpi-delta up">Höchste Zufriedenheit</div>
+                  </div>
+                  <div class="kpi-card" style="margin:0;">
+                    <div class="kpi-label">Feedback: LLM-Typ</div>
+                    <div class="kpi-value">76 %</div>
+                    <div class="kpi-delta warn">Verbesserungspotenzial</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ── SCHICHT B: Sitzungsprotokoll (24 h, pseudonymisiert) ── -->
+            <div class="log-layer">
+              <div class="log-layer-header log-layer-b">
+                <div style="display:flex;align-items:center;">
+                  <span class="log-layer-title">Schicht B — Sitzungsprotokoll</span>
+                  <span class="log-layer-sub">Session-Hash · Typ · Rolle · Feedback · kein Gesprächsinhalt</span>
+                </div>
+                <span class="log-retention log-ret-24h">24 h · Auto-Löschung</span>
+              </div>
+              <div class="log-layer-body">
+                <table class="admin-table" aria-label="Sitzungsprotokoll (pseudonymisiert)">
+                  <thead>
+                    <tr>
+                      <th scope="col">Session-ID</th>
+                      <th scope="col">Zeit</th>
+                      <th scope="col">Rolle</th>
+                      <th scope="col">Typ</th>
+                      <th scope="col">Konfidenz</th>
+                      <th scope="col">Feedback</th>
+                      <th scope="col">Filter?</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code class="log-encrypted">7f3e2a1</code></td>
+                      <td style="font-size:12px;color:var(--muted);"><time datetime="2026-03-20T14:28:00">14:28</time></td>
+                      <td>Geschäftsführung</td>
+                      <td><span class="admin-badge rag">LLM</span></td>
+                      <td>0,92</td>
+                      <td>👍</td>
+                      <td style="color:var(--muted);">—</td>
+                    </tr>
+                    <tr>
+                      <td><code class="log-encrypted">b8c4d5e</code></td>
+                      <td style="font-size:12px;color:var(--muted);"><time datetime="2026-03-20T14:19:00">14:19</time></td>
+                      <td>Führungskraft</td>
+                      <td><span class="admin-badge nav">Navigation</span></td>
+                      <td>0,98</td>
+                      <td>👍</td>
+                      <td style="color:var(--muted);">—</td>
+                    </tr>
+                    <tr>
+                      <td><code class="log-encrypted">9a1f6c3</code></td>
+                      <td style="font-size:12px;color:var(--muted);"><time datetime="2026-03-20T14:07:00">14:07</time></td>
+                      <td>Sonstige</td>
+                      <td><span class="admin-badge faq">FAQ</span></td>
+                      <td>0,99</td>
+                      <td style="color:var(--muted);">—</td>
+                      <td style="color:var(--muted);">—</td>
+                    </tr>
+                    <tr>
+                      <td><code class="log-encrypted">4e2b8a7</code></td>
+                      <td style="font-size:12px;color:var(--muted);"><time datetime="2026-03-20T13:52:00">13:52</time></td>
+                      <td>Personalmanagement</td>
+                      <td><span class="admin-badge warn">Filter</span></td>
+                      <td>—</td>
+                      <td style="color:var(--muted);">—</td>
+                      <td><span class="admin-badge err">Input</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p style="font-size:11px;color:var(--muted);margin-top:6px;">Anfrageinhalte werden nicht gespeichert. Automatische Löschung täglich um 00:00 Uhr (DSGVO Art. 5 Abs. 1 lit. e).</p>
+              </div>
+            </div>
+
+            <!-- ── SCHICHT C: Inhaltsprotokoll (optional, 72 h) ── -->
+            <div class="log-layer">
+              <div class="log-layer-header log-layer-c">
+                <div style="display:flex;align-items:center;">
+                  <span class="log-layer-title">Schicht C — Inhaltsprotokoll<span class="log-optional-badge">Optional</span></span>
+                  <span class="log-layer-sub">Aktivierbar · erfordert Datenschutzhinweis-Ergänzung im Widget</span>
+                </div>
+                <span class="log-retention log-ret-72h">72 h · Auto-Löschung</span>
+              </div>
+              <div class="log-layer-body">
+                <div class="log-notice" role="note">
+                  <span aria-hidden="true">⚠</span>
+                  <span>Dieser Log ist nur aktiv, wenn der Chatbot-Eröffnungstext ergänzt wurde: <em>„Zur Qualitätssicherung werden Gesprächsinhalte pseudonymisiert bis zu 72 Stunden gespeichert."</em> — Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO. Zugriff auf Einzelgespräche ausschließlich für benannte Qualitätsprüferinnen/Qualitätsprüfer.</span>
+                </div>
+                <table class="admin-table" aria-label="Inhaltsprotokoll (pseudonymisiert, optional)">
+                  <thead>
+                    <tr>
+                      <th scope="col">Session-ID</th>
+                      <th scope="col">Zeit</th>
+                      <th scope="col">Rolle</th>
+                      <th scope="col">Frage (Auszug, max. 150 Z.)</th>
+                      <th scope="col">Antwort (Auszug, max. 150 Z.)</th>
+                      <th scope="col">Feedback</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code class="log-encrypted">7f3e2a1</code></td>
+                      <td style="font-size:12px;color:var(--muted);"><time datetime="2026-03-20T14:28:00">14:28</time></td>
+                      <td>GF</td>
+                      <td style="font-size:12px;">Wie entwickle ich eine KI-Strategie für mein KMU?</td>
+                      <td style="font-size:12px;">Eine KI-Strategie beginnt mit einer Bestandsaufnahme bestehender Prozesse…</td>
+                      <td>👍</td>
+                    </tr>
+                    <tr>
+                      <td><code class="log-encrypted">b8c4d5e</code></td>
+                      <td style="font-size:12px;color:var(--muted);"><time datetime="2026-03-20T14:19:00">14:19</time></td>
+                      <td>FK</td>
+                      <td style="font-size:12px;">Welche Lernreisen gibt es zur Digitalisierung?</td>
+                      <td style="font-size:12px;">Die Plattform bietet strukturierte Lernpfade zu fünf Transformationsthemen…</td>
+                      <td>👍</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p style="font-size:11px;color:var(--muted);margin-top:6px;">Automatische Löschung nach 72 h. Kein Export, keine Weitergabe. Zugriff wird protokolliert.</p>
+              </div>
+            </div>
+
+            <!-- ── SCHICHT D: Sicherheitsprotokoll (90 Tage, verschlüsselt) ── -->
+            <div class="log-layer">
+              <div class="log-layer-header log-layer-d">
+                <div style="display:flex;align-items:center;">
+                  <span class="log-layer-title">Schicht D — Sicherheitsprotokoll</span>
+                  <span class="log-layer-sub">Filterauslösungen · AES-256 verschlüsselt · PII vorher bereinigt</span>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                  <span class="log-access">🔒 Admin + DSB</span>
+                  <span class="log-retention log-ret-90d">90 Tage</span>
+                </div>
+              </div>
+              <div class="log-layer-body">
+                <table class="admin-table" aria-label="Sicherheitsprotokoll (Filterauslösungen, verschlüsselt)">
+                  <thead>
+                    <tr>
+                      <th scope="col">Session-ID</th>
+                      <th scope="col">Zeitstempel</th>
+                      <th scope="col">Filter</th>
+                      <th scope="col">Kategorie</th>
+                      <th scope="col">Schweregrad</th>
+                      <th scope="col">Inhalt (verschlüsselt)</th>
+                      <th scope="col">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code class="log-encrypted">4e2b8a7</code></td>
+                      <td style="font-size:12px;color:var(--muted);"><time datetime="2026-03-20T13:52:00">20.03. 13:52</time></td>
+                      <td><span class="admin-badge err">Input</span></td>
+                      <td style="font-size:12.5px;">Prompt-Injection</td>
+                      <td><span class="admin-badge err">Hoch</span></td>
+                      <td><code class="log-encrypted">[AES-256 · Schlüssel: Admin+DSB]</code></td>
+                      <td><span class="admin-badge ok">Abgefangen</span></td>
+                    </tr>
+                    <tr>
+                      <td><code class="log-encrypted">3c7a1b4</code></td>
+                      <td style="font-size:12px;color:var(--muted);"><time datetime="2026-03-20T09:08:00">20.03. 09:08</time></td>
+                      <td><span class="admin-badge warn">Output</span></td>
+                      <td style="font-size:12.5px;">Thematische Abweichung</td>
+                      <td><span class="admin-badge warn">Mittel</span></td>
+                      <td><code class="log-encrypted">[AES-256 · Schlüssel: Admin+DSB]</code></td>
+                      <td><span class="admin-badge ok">Abgefangen</span></td>
+                    </tr>
+                    <tr>
+                      <td><code class="log-encrypted">e5d9f2a</code></td>
+                      <td style="font-size:12px;color:var(--muted);"><time datetime="2026-03-19T16:11:00">19.03. 16:11</time></td>
+                      <td><span class="admin-badge warn">Output</span></td>
+                      <td style="font-size:12.5px;">PII-Verdacht (Name)</td>
+                      <td><span class="admin-badge warn">Mittel</span></td>
+                      <td><code class="log-encrypted">[AES-256 · Schlüssel: Admin+DSB]</code></td>
+                      <td><span class="admin-badge ok">Anonymisiert</span></td>
+                    </tr>
+                    <tr>
+                      <td><code class="log-encrypted">a1c8e3f</code></td>
+                      <td style="font-size:12px;color:var(--muted);"><time datetime="2026-03-18T09:33:00">18.03. 09:33</time></td>
+                      <td><span class="admin-badge err">Input</span></td>
+                      <td style="font-size:12.5px;">Hate Speech</td>
+                      <td><span class="admin-badge err">Hoch</span></td>
+                      <td><code class="log-encrypted">[AES-256 · Schlüssel: Admin+DSB]</code></td>
+                      <td><span class="admin-badge ok">Abgefangen</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p style="font-size:11px;color:var(--muted);margin-top:6px;">Inhalte werden vor Speicherung PII-bereinigt und AES-256-verschlüsselt. Entschlüsselung nur mit Admin-Schlüssel durch berechtigte Personen (Admin + Datenschutzbeauftragte/r). Löschung nach 90 Tagen. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (Sicherheitsinteresse).</p>
+              </div>
+            </div>
+
+          </div>
+
+        </div><!-- /.admin-main -->
+      </div><!-- /.admin-shell -->
+    </section>
+
+  </main>
+
+  <!-- FAB -->
+  <button class="fab"
+          aria-label="Chat öffnen – Transform-Assistent"
+          aria-haspopup="dialog"
+          onclick="this.style.display='none'">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <span class="fab-label" aria-hidden="true">Fragen? Ich helfe!</span>
+  </button>
+
+
+  <script>
+    /* ── Admin sidebar navigation ── */
+    function showAdminSection(id) {
+      document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.admin-nav-btn').forEach(b => b.classList.remove('active'));
+      const sec = document.getElementById('asec-' + id);
+      const btn = document.getElementById('anav-' + id);
+      if (sec) sec.classList.add('active');
+      if (btn) btn.classList.add('active');
+    }
+
+    /* ── Tab switching ── */
+    function showTab(id) {
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      });
+      document.getElementById('tab-' + id).classList.add('active');
+      const btn = document.getElementById('tab-btn-' + id);
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
+    }
+
+    /* ── Role pill selection (v6: .role-pill instead of .role-card) ── */
+    const suggestions = {
+      gf: [
+        'Wie entwickle ich eine KI-Strategie für mein KMU?',
+        'Welche Förderprogramme gibt es für die Transformation?',
+        'Zeig mir den Selbstcheck für mein Unternehmen.',
+      ],
+      hr: [
+        'Welche Qualifizierungsmaßnahmen gibt es für meine Mitarbeiter?',
+        'Wie gestalte ich Change-Prozesse erfolgreich?',
+        'Was ist eine Lernreise und wie starte ich damit?',
+      ],
+      fk: [
+        'Wie führe ich mein Team durch den digitalen Wandel?',
+        'Welche Methoden helfen bei agiler Transformation?',
+        'Gibt es Praxisbeispiele aus meiner Branche?',
+      ],
+      other: [
+        'Was ist jetzt-transformieren.de?',
+        'Welche Themen deckt die Plattform ab?',
+        'Für wen ist dieses Angebot gedacht?',
+      ],
+    };
+
+    function selectRole(btn, role) {
+      document.querySelectorAll('.role-pill').forEach(c => {
+        c.classList.remove('selected');
+        c.setAttribute('aria-pressed', 'false');
+      });
+      btn.classList.add('selected');
+      btn.setAttribute('aria-pressed', 'true');
+
+      const list = document.getElementById('suggestions');
+      if (!list) return;
+      const btns = list.querySelectorAll('.suggestion-btn');
+      const texts = suggestions[role] || suggestions.gf;
+      btns.forEach((b, i) => {
+        if (texts[i]) {
+          b.textContent = texts[i];
+          b.setAttribute('aria-label', 'Frage stellen: ' + texts[i]);
+          b.style.display = '';
+        } else {
+          b.style.display = 'none';
+        }
+      });
+    }
+
+    /* ── Source accordion ── */
+    function toggleSources(btn) {
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!expanded));
+      const bodyId = btn.getAttribute('aria-controls');
+      const body = document.getElementById(bodyId);
+      if (body) body.classList.toggle('open', !expanded);
+    }
+
+    /* ── Feedback ── */
+    function toggleFeedback(btn, type) {
+      const bar = btn.closest('.feedback-bar');
+      const allBtns = bar.querySelectorAll('.fb-btn');
+      const posClass = 'active-pos', negClass = 'active-neg';
+      const isActive = btn.getAttribute('aria-pressed') === 'true';
+      allBtns.forEach(b => {
+        b.classList.remove(posClass, negClass);
+        b.setAttribute('aria-pressed', 'false');
+      });
+      if (!isActive) {
+        btn.classList.add(type === 'pos' ? posClass : negClass);
+        btn.setAttribute('aria-pressed', 'true');
+      }
+    }
+
+    /* ── Textarea auto-resize ── */
+    function autoResize(el) {
+      el.style.height = 'auto';
+      el.style.height = Math.min(el.scrollHeight, 80) + 'px';
+      const sendId = el.id === 'chat-input' ? 'chat-send' : 'welcome-send';
+      const send = document.getElementById(sendId);
+      if (send) send.disabled = el.value.trim() === '';
+    }
+
+    /* ── Char counter ── */
+    function updateCounter(el, counterId) {
+      const counter = document.getElementById(counterId);
+      if (!counter) return;
+      const len = el.value.length;
+      const max = 500;
+      if (len > 0) {
+        counter.textContent = len + '/' + max;
+        counter.classList.toggle('warn', len > max * 0.9);
+      } else {
+        counter.textContent = '';
+      }
+    }
+
+    /* ── Keyboard handling ── */
+    function handleKey(e, inputId) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        const val = document.getElementById(inputId).value.trim();
+        if (val) startChat(val);
+      }
+    }
+
+    /* ── Demo: switch to chat tab with pre-filled context ── */
+    function startChat(text) {
+      if (!text || !text.trim()) return;
+      showTab('chat');
+      const inp = document.getElementById('chat-input');
+      if (inp) {
+        inp.value = text;
+        inp.dispatchEvent(new Event('input'));
+      }
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,3277 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestaltungsvorschlag v3 – Kante | f-bb gGmbH × jetzt-transformieren.de</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       DESIGN TOKENS
+    ============================================================ */
+    :root {
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --navy: #245883;
+      --navy-dark: #1a3e5e;
+      --navy-deep: #0f2536;
+      --blue: #009ee0;
+      --orange: #ff6600;
+      --white: #ffffff;
+      --bg-warm: #f9f8f5;
+      --surface: #ffffff;
+      --surface-2: #f5f3ee;
+      --text: #0f2536;
+      --text-2: #3a5068;
+      --muted: #6b7f8e;
+      --border: #e2e8ef;
+      --border-2: #d4dde6;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font);
+      background: #eeece7;
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    img {
+      display: block;
+    }
+
+    /* ============================================================
+       SKIP LINK
+    ============================================================ */
+    .skip-link {
+      position: absolute;
+      top: -44px;
+      left: 8px;
+      background: var(--navy-deep);
+      color: var(--white);
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      z-index: 9999;
+      transition: top 0.2s;
+    }
+
+    .skip-link:focus {
+      top: 8px;
+      outline: 3px solid var(--navy);
+    }
+
+    /* ============================================================
+       DEMO SHELL – HEADER
+    ============================================================ */
+    .demo-header {
+      background: #ffffff;
+      border-bottom: 2px solid #ff6600;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .demo-header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .demo-header-logo {
+      display: flex;
+      align-items: center;
+    }
+
+    .demo-divider {
+      width: 1px;
+      height: 24px;
+      background: var(--border-2);
+    }
+
+    .demo-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--navy-deep);
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .demo-badge {
+      background: var(--orange);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .demo-header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .demo-meta {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .demo-client-badge {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--navy);
+      background: #eaf3fb;
+      border: 1px solid #c5ddf0;
+      padding: 3px 10px;
+      border-radius: var(--radius-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* ============================================================
+       LAYOUT: SIDEBAR + CONTENT
+    ============================================================ */
+    .demo-layout {
+      display: flex;
+      min-height: calc(100vh - 56px);
+    }
+
+    /* ============================================================
+       VERTICAL TAB SIDEBAR
+    ============================================================ */
+    .tab-sidebar {
+      width: 200px;
+      flex-shrink: 0;
+      background: #ffffff;
+      border-right: 1px solid var(--border);
+      padding: 24px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      position: sticky;
+      top: 56px;
+      height: calc(100vh - 56px);
+      overflow-y: auto;
+    }
+
+    .sidebar-section-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 8px 20px 4px;
+      margin-top: 8px;
+    }
+
+    .tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      width: 100%;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+      text-align: left;
+      transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+      cursor: pointer;
+      border-radius: 0;
+      position: relative;
+    }
+
+    .tab-btn:hover {
+      background: #f5f3ee;
+      color: var(--text-2);
+    }
+
+    .tab-btn[aria-selected="true"] {
+      background: #eef4fb;
+      color: var(--navy-deep);
+      font-weight: 600;
+      box-shadow: inset 3px 0 0 var(--orange);
+    }
+
+    .tab-btn:focus-visible {
+      outline: 3px solid var(--navy);
+      outline-offset: -3px;
+    }
+
+    .tab-btn-icon {
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* ============================================================
+       CONTENT AREA
+    ============================================================ */
+    .content-area {
+      flex: 1;
+      padding: 40px 48px;
+      min-height: calc(100vh - 56px);
+      overflow-x: hidden;
+    }
+
+    .tab-panel {
+      display: none;
+      animation: fadeIn 0.2s var(--ease);
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============================================================
+       STAGE – WIDGET CONTAINER
+    ============================================================ */
+    .stage {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 0;
+    }
+
+    /* ============================================================
+       WIDGET SHELL
+    ============================================================ */
+    .widget {
+      width: 360px;
+      border-radius: 20px;
+      background: var(--white);
+      box-shadow: 0 8px 40px rgba(15, 37, 54, 0.18);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ============================================================
+       WIDGET HEADER
+    ============================================================ */
+    .w-head {
+      height: 52px;
+      background: var(--white);
+      border-bottom: 1px solid #e2e8ef;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      flex-shrink: 0;
+    }
+
+    .w-head-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .w-head-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--navy);
+      flex-shrink: 0;
+    }
+
+    .w-head-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--navy-deep);
+    }
+
+    .w-online-badge {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border-radius: 20px;
+      padding: 2px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .w-online-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #4caf50;
+      display: inline-block;
+    }
+
+    /* ============================================================
+       WIDGET BODY – CHAT AREA
+    ============================================================ */
+    .w-body {
+      background: #faf9f7;
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-height: 380px;
+      max-height: 460px;
+    }
+
+    /* ============================================================
+       WELCOME SCREEN
+    ============================================================ */
+    .w-welcome {
+      padding: 16px 14px;
+      background: var(--white);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .w-welcome-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .w-orange-square {
+      width: 12px;
+      height: 12px;
+      background: var(--orange);
+      flex-shrink: 0;
+      border-radius: 2px;
+    }
+
+    .w-welcome-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .greeting-line {
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--navy-deep);
+      font-style: italic;
+      line-height: 1.45;
+      position: relative;
+      padding: 0 4px;
+    }
+
+    .greeting-line::before {
+      content: '\201E';
+      color: var(--navy);
+      font-size: 24px;
+      font-style: normal;
+      line-height: 1;
+      vertical-align: -4px;
+      margin-right: 2px;
+    }
+
+    .greeting-line::after {
+      content: '\201C';
+      color: var(--navy);
+      font-size: 24px;
+      font-style: normal;
+      line-height: 1;
+      vertical-align: -4px;
+      margin-left: 2px;
+    }
+
+    .w-sub-text {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* Role step buttons */
+    .role-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .role-step {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      width: 100%;
+      text-align: left;
+      background: var(--white);
+      cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+    }
+
+    .role-step:hover {
+      border-color: var(--border-2);
+      background: var(--surface-2);
+    }
+
+    .role-step.selected {
+      background: var(--white);
+      border-left: 3px solid var(--navy);
+      border-color: var(--navy);
+    }
+
+    .role-step:focus-visible {
+      outline: 3px solid var(--navy);
+      outline-offset: 2px;
+    }
+
+    .role-num {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--orange);
+      opacity: 0.25;
+      line-height: 1;
+      min-width: 36px;
+      transition: opacity 0.15s;
+    }
+
+    .role-step.selected .role-num,
+    .role-step:hover .role-num {
+      opacity: 1;
+    }
+
+    .role-info {
+      flex: 1;
+    }
+
+    .role-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--navy-deep);
+      line-height: 1.3;
+    }
+
+    .role-desc {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    /* Suggestion buttons */
+    .suggestions {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .sugg-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .sugg-btn {
+      background: #f5f3ee;
+      border: none;
+      border-radius: 6px;
+      padding: 9px 12px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-2);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      transition: background 0.15s;
+    }
+
+    .sugg-btn:hover {
+      background: #ede9e1;
+    }
+
+    .sugg-btn:focus-visible {
+      outline: 3px solid var(--navy);
+      outline-offset: 2px;
+    }
+
+    .sugg-arrow {
+      color: var(--orange);
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    /* ============================================================
+       USER MESSAGE
+    ============================================================ */
+    .msg-user-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 3px;
+      margin: 6px 0;
+    }
+
+    .msg-user-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .msg-user-text {
+      color: #6b7f8e;
+      font-style: italic;
+      font-size: 14px;
+      line-height: 1.5;
+      max-width: 240px;
+      text-align: right;
+    }
+
+    .msg-user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--navy);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .msg-user-avatar svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .msg-user-time {
+      font-size: 11px;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    /* ============================================================
+       AI RESPONSE CARD
+    ============================================================ */
+    article.ai-card {
+      background: var(--white);
+      border-top: 3px solid var(--orange);
+      border-radius: 0 0 10px 10px;
+      padding: 14px 16px;
+      margin: 8px 0;
+    }
+
+    .ai-card-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .ai-type-badge {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 2px 7px;
+      border-radius: var(--radius-sm);
+    }
+
+    .ai-type-badge.faq {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .ai-type-badge.llm {
+      background: #e3f2fd;
+      color: #1565c0;
+    }
+
+    .ai-type-badge.reflex {
+      background: #fff3e0;
+      color: #e65100;
+    }
+
+    .ai-type-badge.fallback {
+      background: #fce4ec;
+      color: #880e4f;
+    }
+
+    .ai-model-badge {
+      font-size: 10px;
+      color: var(--muted);
+      background: var(--surface-2);
+      padding: 2px 7px;
+      border-radius: var(--radius-sm);
+      font-family: 'Courier New', monospace;
+    }
+
+    .ai-time {
+      font-size: 10px;
+      color: var(--muted);
+      margin-left: auto;
+    }
+
+    .ai-card h4 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy-deep);
+      margin-bottom: 8px;
+      line-height: 1.35;
+    }
+
+    .ai-card p {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.6;
+    }
+
+    .ai-card sup {
+      font-size: 10px;
+      color: var(--navy);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Footnotes / source citations */
+    .footnotes-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      background: none;
+      border: none;
+      padding: 4px 0;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--navy);
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+
+    .footnotes-toggle:hover {
+      color: var(--navy-dark);
+    }
+
+    .footnotes-toggle:focus-visible {
+      outline: 3px solid var(--navy);
+      outline-offset: 2px;
+    }
+
+    .footnotes-toggle svg {
+      transition: transform 0.2s;
+    }
+
+    .footnotes-toggle[aria-expanded="true"] svg {
+      transform: rotate(180deg);
+    }
+
+    .footnotes {
+      display: none;
+      margin-top: 8px;
+      padding: 10px 12px;
+      background: var(--surface-2);
+      border-radius: var(--radius-sm);
+      border-left: 3px solid var(--border-2);
+    }
+
+    .footnotes.open {
+      display: block;
+    }
+
+    .footnotes ol {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .footnotes li {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 3px;
+    }
+
+    .footnotes li a {
+      color: var(--navy);
+      text-decoration: none;
+    }
+
+    .footnotes li a:hover {
+      text-decoration: underline;
+    }
+
+    /* Feedback row */
+    .feedback-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+
+    .feedback-label {
+      font-size: 11px;
+      color: var(--muted);
+      flex: 1;
+    }
+
+    .feedback-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid var(--border-2);
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .feedback-btn:hover {
+      border-color: var(--navy);
+    }
+
+    .feedback-btn[aria-pressed="true"] {
+      background: var(--navy);
+      border-color: var(--navy);
+    }
+
+    .feedback-btn[aria-pressed="true"] svg path,
+    .feedback-btn[aria-pressed="true"] svg polyline {
+      stroke: var(--white);
+    }
+
+    .feedback-btn:focus-visible {
+      outline: 3px solid var(--navy);
+      outline-offset: 2px;
+    }
+
+    /* ============================================================
+       TYPING INDICATOR
+    ============================================================ */
+    .typing-wrap {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin: 6px 0;
+    }
+
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 8px 14px;
+    }
+
+    .typing-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--navy);
+      animation: typingPulse 1.2s ease-in-out infinite;
+    }
+
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typingPulse {
+      0%, 60%, 100% { opacity: 0.25; transform: translateY(0); }
+      30% { opacity: 1; transform: translateY(-3px); }
+    }
+
+    /* ============================================================
+       WIDGET INPUT AREA
+    ============================================================ */
+    .w-input-area {
+      background: var(--white);
+      border-top: 1px solid var(--border);
+      padding: 10px 12px;
+      flex-shrink: 0;
+    }
+
+    .w-input-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .w-input {
+      flex: 1;
+      border: 1px solid var(--border-2);
+      border-radius: var(--radius-full);
+      padding: 8px 14px;
+      font-size: 13px;
+      font-family: var(--font);
+      color: var(--text);
+      background: var(--surface-2);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .w-input:focus {
+      border-color: var(--navy);
+      background: var(--white);
+    }
+
+    .w-input::placeholder {
+      color: var(--muted);
+    }
+
+    .w-send-btn {
+      background: var(--orange);
+      color: var(--white);
+      border: none;
+      border-radius: 20px;
+      padding: 6px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      flex-shrink: 0;
+    }
+
+    .w-send-btn:hover {
+      opacity: 0.88;
+    }
+
+    .w-send-btn:focus-visible {
+      outline: 3px solid var(--navy);
+      outline-offset: 2px;
+    }
+
+    .w-char-counter {
+      font-size: 11px;
+      color: var(--muted);
+      text-align: right;
+      margin-top: 4px;
+    }
+
+    /* ============================================================
+       AI DISCLOSURE ASIDE
+    ============================================================ */
+    .ai-disclosure {
+      margin-top: 8px;
+      padding: 8px 12px;
+      background: #f0f4f8;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ============================================================
+       STATES TAB – GRID
+    ============================================================ */
+    .states-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .state-item h3 {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    /* ============================================================
+       SECTION HEADERS
+    ============================================================ */
+    .section-header {
+      margin-bottom: 28px;
+    }
+
+    .section-header h2 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--navy-deep);
+      margin-bottom: 4px;
+    }
+
+    .section-header p {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    /* ============================================================
+       MOBILE TAB
+    ============================================================ */
+    .phone-stage {
+      display: flex;
+      justify-content: center;
+      padding: 0;
+    }
+
+    .phone-mock {
+      width: 375px;
+      background: #1a1a2e;
+      border-radius: 44px;
+      padding: 16px;
+      box-shadow: 0 20px 60px rgba(15, 37, 54, 0.4);
+    }
+
+    .phone-screen {
+      background: #eeece7;
+      border-radius: 32px;
+      overflow: hidden;
+    }
+
+    .phone-status-bar {
+      background: var(--navy-deep);
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+    }
+
+    .phone-status-time {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    .phone-status-icons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .phone-status-icon {
+      font-size: 11px;
+      color: rgba(255,255,255,0.8);
+    }
+
+    .phone-widget {
+      background: var(--white);
+      border-radius: 0;
+      box-shadow: none;
+      width: 100%;
+    }
+
+    .phone-fab {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      width: 52px;
+      height: 52px;
+      background: var(--orange);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(255,102,0,0.4);
+    }
+
+    .phone-screen-relative {
+      position: relative;
+    }
+
+    /* ============================================================
+       ADMIN PANEL
+    ============================================================ */
+    .admin-wrap {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: 0 2px 16px rgba(15,37,54,0.08);
+    }
+
+    .admin-topnav {
+      display: flex;
+      align-items: stretch;
+      border-bottom: 1px solid var(--border);
+      background: var(--white);
+      gap: 0;
+    }
+
+    .admin-nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 14px 20px;
+      border: none;
+      background: transparent;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      position: relative;
+      transition: color 0.15s;
+      white-space: nowrap;
+    }
+
+    .admin-nav-btn::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--orange);
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    .admin-nav-btn:hover {
+      color: var(--text-2);
+    }
+
+    .admin-nav-btn.active {
+      color: var(--navy-deep);
+      font-weight: 700;
+    }
+
+    .admin-nav-btn.active::after {
+      opacity: 1;
+    }
+
+    .admin-nav-btn:focus-visible {
+      outline: 3px solid var(--navy);
+      outline-offset: -3px;
+    }
+
+    .admin-content {
+      padding: 28px;
+    }
+
+    .admin-section {
+      display: none;
+    }
+
+    .admin-section.active {
+      display: block;
+    }
+
+    /* KPI Row */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .kpi-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      text-align: center;
+    }
+
+    .kpi-number {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--navy);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .kpi-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-2);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .kpi-delta {
+      font-size: 11px;
+      color: #2e7d32;
+      margin-top: 4px;
+    }
+
+    /* Admin tables */
+    .admin-table-wrap {
+      overflow-x: auto;
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .admin-table th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--muted);
+      padding: 10px 14px;
+      border-bottom: 2px solid var(--border);
+      background: var(--surface-2);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .admin-table th:hover {
+      color: var(--text-2);
+    }
+
+    .admin-table td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .admin-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .admin-table tr:hover td {
+      background: var(--surface-2);
+    }
+
+    .admin-section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--navy-deep);
+      margin-bottom: 16px;
+    }
+
+    /* Reflex katalog grid */
+    .reflex-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .reflex-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      background: var(--white);
+    }
+
+    .reflex-card-trigger {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--navy-deep);
+      margin-bottom: 6px;
+    }
+
+    .reflex-card-action {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .reflex-card-badge {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: #fff3e0;
+      color: #e65100;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Status badges */
+    .badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .badge-green { background: #e8f5e9; color: #2e7d32; }
+    .badge-blue { background: #e3f2fd; color: #1565c0; }
+    .badge-orange { background: #fff3e0; color: #e65100; }
+    .badge-red { background: #fce4ec; color: #880e4f; }
+    .badge-grey { background: var(--surface-2); color: var(--muted); }
+
+    /* Chart placeholder */
+    .chart-placeholder {
+      background: var(--surface-2);
+      border: 1px dashed var(--border-2);
+      border-radius: var(--radius-md);
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 20px;
+    }
+
+    /* ============================================================
+       FAB FLOATING BUTTON
+    ============================================================ */
+    .fab-demo {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      width: 56px;
+      height: 56px;
+      background: var(--orange);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(255,102,0,0.45);
+      border: none;
+      cursor: pointer;
+      z-index: 200;
+      transition: transform 0.2s var(--ease), box-shadow 0.2s;
+    }
+
+    .fab-demo:hover {
+      transform: scale(1.08);
+      box-shadow: 0 6px 28px rgba(255,102,0,0.55);
+    }
+
+    .fab-demo:focus-visible {
+      outline: 3px solid var(--navy);
+      outline-offset: 3px;
+    }
+
+    /* ============================================================
+       ADMIN MONITORING
+    ============================================================ */
+    .monitor-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .monitor-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px;
+    }
+
+    .monitor-card-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .monitor-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+    }
+
+    .monitor-row:last-child {
+      border-bottom: none;
+    }
+
+    .monitor-key {
+      color: var(--text-2);
+    }
+
+    .monitor-val {
+      font-weight: 600;
+      color: var(--navy-deep);
+    }
+
+    /* ============================================================
+       SYSTEM PROMPT SECTION
+    ============================================================ */
+    .prompt-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+
+    .prompt-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .prompt-card-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--navy-deep);
+    }
+
+    .prompt-card-body {
+      font-size: 12px;
+      color: var(--text-2);
+      line-height: 1.6;
+      background: var(--surface-2);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      font-family: 'Courier New', monospace;
+    }
+
+    /* ============================================================
+       WISSENSBASIS SECTION
+    ============================================================ */
+    .wissen-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .wissen-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .wissen-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      background: #eef4fb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .wissen-info h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--navy-deep);
+      margin-bottom: 3px;
+    }
+
+    .wissen-info p {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* ============================================================
+       REDUCED MOTION
+    ============================================================ */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* ============================================================
+       MISC UTILITIES
+    ============================================================ */
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: var(--radius-sm);
+      background: var(--surface-2);
+      color: var(--text-2);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .edit-btn {
+      background: none;
+      border: 1px solid var(--border-2);
+      color: var(--navy);
+      padding: 4px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .edit-btn:hover {
+      background: var(--surface-2);
+    }
+
+    .edit-btn:focus-visible {
+      outline: 3px solid var(--navy);
+      outline-offset: 2px;
+    }
+
+    /* ── 4-Layer Logging Architecture ──────────────────────────── */
+    .log-layer { margin-bottom: 24px; }
+    .log-layer-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px; border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid rgba(0,0,0,.06);
+    }
+    .log-layer-title { font-size: 13px; font-weight: 700; }
+    .log-layer-sub { font-size: 11px; margin-left: 8px; }
+    .log-layer-a { background: #e8f4fd; border-left: 3px solid #009ee0; }
+    .log-layer-a .log-layer-title { color: #0369a1; }
+    .log-layer-a .log-layer-sub { color: #0369a1; opacity: .7; }
+    .log-layer-b { background: #eef4fb; border-left: 3px solid #245883; }
+    .log-layer-b .log-layer-title { color: #1a3e5e; }
+    .log-layer-b .log-layer-sub { color: #1a3e5e; opacity: .7; }
+    .log-layer-c { background: #fffbeb; border-left: 3px solid #d97706; }
+    .log-layer-c .log-layer-title { color: #92400e; }
+    .log-layer-c .log-layer-sub { color: #78350f; opacity: .8; }
+    .log-layer-d { background: #fef2f2; border-left: 3px solid #dc2626; }
+    .log-layer-d .log-layer-title { color: #991b1b; }
+    .log-layer-d .log-layer-sub { color: #7f1d1d; opacity: .8; }
+    .log-layer-body { padding: 12px 14px; background: var(--white); border: 1px solid rgba(0,0,0,.08); border-top: none; border-radius: 0 0 6px 6px; }
+    .log-retention {
+      font-size: 11px; font-weight: 600; padding: 2px 8px;
+      border-radius: 20px; white-space: nowrap;
+    }
+    .log-ret-forever { background: #dcfce7; color: #166534; }
+    .log-ret-24h     { background: #dbeafe; color: #1e40af; }
+    .log-ret-72h     { background: #fef9c3; color: #854d0e; }
+    .log-ret-90d     { background: #fee2e2; color: #991b1b; }
+    .log-access { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; background: #fce7f3; color: #9d174d; white-space: nowrap; }
+    .log-notice {
+      background: #fffbeb; border: 1px solid #fcd34d; border-radius: 5px;
+      padding: 9px 12px; font-size: 12px; color: #78350f;
+      display: flex; gap: 8px; align-items: flex-start; margin-bottom: 12px;
+    }
+    .log-encrypted {
+      font-family: 'Courier New', monospace; font-size: 11px;
+      color: var(--muted); background: #f1f5f9;
+      padding: 1px 5px; border-radius: 3px; letter-spacing: .3px;
+    }
+    .log-optional-badge {
+      display: inline-block; font-size: 10px; font-weight: 700;
+      padding: 1px 6px; border-radius: 3px;
+      background: #fef3c7; color: #92400e;
+      vertical-align: middle; margin-left: 6px; text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Skip link -->
+  <a class="skip-link" href="#main-content">Zum Hauptinhalt springen</a>
+
+  <!-- ============================================================
+       DEMO HEADER
+  ============================================================ -->
+  <header class="demo-header" aria-label="Demo-Navigation">
+    <div class="demo-header-left">
+      <div class="demo-header-logo">
+        <img
+          src="https://jetzt-transformieren.de/assets/img/logo_transform-by.svg"
+          alt="transform.by"
+          height="28"
+        >
+      </div>
+      <div class="demo-divider" aria-hidden="true"></div>
+      <span class="demo-title">Chatbot-Widget</span>
+      <span class="demo-badge" aria-label="Version 7">v7</span>
+    </div>
+    <div class="demo-header-right">
+      <span class="demo-meta">Gestaltungsvorschlag 3 – Kante</span>
+      <span class="demo-client-badge">f-bb gGmbH</span>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       MAIN LAYOUT
+  ============================================================ -->
+  <div class="demo-layout">
+
+    <!-- VERTICAL SIDEBAR NAV -->
+    <nav
+      class="tab-sidebar"
+      role="tablist"
+      aria-label="Widget-Ansichten"
+    >
+      <span class="sidebar-section-label" aria-hidden="true">Widget</span>
+
+      <button
+        class="tab-btn"
+        role="tab"
+        id="tab-welcome"
+        aria-selected="true"
+        aria-controls="panel-welcome"
+        onclick="showTab('welcome')"
+      >
+        <span class="tab-btn-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M8 5v3l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </span>
+        Begrüßung
+      </button>
+
+      <button
+        class="tab-btn"
+        role="tab"
+        id="tab-chat"
+        aria-selected="false"
+        aria-controls="panel-chat"
+        onclick="showTab('chat')"
+      >
+        <span class="tab-btn-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M2 3h12v8H9l-3 3v-3H2V3z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        Chat-Verlauf
+      </button>
+
+      <button
+        class="tab-btn"
+        role="tab"
+        id="tab-states"
+        aria-selected="false"
+        aria-controls="panel-states"
+        onclick="showTab('states')"
+      >
+        <span class="tab-btn-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/>
+            <rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/>
+            <rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/>
+            <rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+        </span>
+        Zustände
+      </button>
+
+      <span class="sidebar-section-label" aria-hidden="true">Ansichten</span>
+
+      <button
+        class="tab-btn"
+        role="tab"
+        id="tab-mobile"
+        aria-selected="false"
+        aria-controls="panel-mobile"
+        onclick="showTab('mobile')"
+      >
+        <span class="tab-btn-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <rect x="4" y="1" width="8" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="8" cy="12.5" r="0.75" fill="currentColor"/>
+          </svg>
+        </span>
+        Mobile
+      </button>
+
+      <button
+        class="tab-btn"
+        role="tab"
+        id="tab-admin"
+        aria-selected="false"
+        aria-controls="panel-admin"
+        onclick="showTab('admin')"
+      >
+        <span class="tab-btn-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="5" r="2.5" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M3 13c0-2.76 2.24-5 5-5s5 2.24 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </span>
+        Admin
+      </button>
+    </nav>
+
+    <!-- CONTENT AREA -->
+    <main class="content-area" id="main-content">
+
+      <!-- ============================================================
+           TAB 1 – WELCOME / BEGRÜSSUNG
+      ============================================================ -->
+      <section
+        class="tab-panel active"
+        id="panel-welcome"
+        role="tabpanel"
+        aria-labelledby="tab-welcome"
+      >
+        <div class="section-header">
+          <h2>Begrüßungsansicht</h2>
+          <p>Rollenwahl, Gesprächseinstieg und KI-Transparenzpflicht gemäß EU AI Act Art. 50</p>
+        </div>
+
+        <div class="stage">
+          <div
+            class="widget"
+            role="dialog"
+            aria-label="Transform-Assistent Chatbot"
+            aria-describedby="ai-disclosure-text-3"
+          >
+            <!-- Widget header -->
+            <div class="w-head">
+              <div class="w-head-left">
+                <div class="w-head-dot" aria-hidden="true"></div>
+                <span class="w-head-name">Transform-Assistent</span>
+              </div>
+              <div class="w-online-badge" aria-label="Status: Online">
+                <span class="w-online-dot" aria-hidden="true"></span>
+                Online
+              </div>
+            </div>
+
+            <!-- Welcome body -->
+            <div class="w-welcome">
+              <!-- Top label -->
+              <div class="w-welcome-top">
+                <div class="w-orange-square" aria-hidden="true"></div>
+                <span class="w-welcome-label">Transform-Assistent</span>
+              </div>
+
+              <!-- Greeting -->
+              <p class="greeting-line">Wie kann ich Ihnen bei der digitalen Transformation helfen?</p>
+
+              <!-- Sub text + disclosure -->
+              <p class="w-sub-text">
+                Ich bin ein KI-Assistent gemäß EU AI Act Art. 50. Wählen Sie Ihre Rolle, damit ich Ihnen gezielter helfen kann.
+              </p>
+
+              <!-- AI Disclosure -->
+              <aside class="ai-disclosure" id="ai-disclosure-text-3">
+                <strong>KI-Assistent (EU AI Act Art. 50):</strong> Dieser Assistent wird durch KI gestützt. Antworten können Fehler enthalten. Gesprächsdaten werden pseudonymisiert und max. 72 h zur Qualitätssicherung gespeichert.
+              </aside>
+
+              <!-- Role selection -->
+              <div class="role-steps" role="group" aria-label="Rollenauswahl">
+                <button
+                  class="role-step selected"
+                  id="role-gf"
+                  onclick="selectRole(this, 'gf')"
+                  aria-pressed="true"
+                >
+                  <span class="role-num" aria-hidden="true">01</span>
+                  <div class="role-info">
+                    <div class="role-name">Geschäftsführung</div>
+                    <div class="role-desc">Strategie, Förderung, Selbstcheck</div>
+                  </div>
+                </button>
+
+                <button
+                  class="role-step"
+                  id="role-pm"
+                  onclick="selectRole(this, 'pm')"
+                  aria-pressed="false"
+                >
+                  <span class="role-num" aria-hidden="true">02</span>
+                  <div class="role-info">
+                    <div class="role-name">Personalmanagement</div>
+                    <div class="role-desc">Qualifizierung, New Work, Kompetenz</div>
+                  </div>
+                </button>
+
+                <button
+                  class="role-step"
+                  id="role-fk"
+                  onclick="selectRole(this, 'fk')"
+                  aria-pressed="false"
+                >
+                  <span class="role-num" aria-hidden="true">03</span>
+                  <div class="role-info">
+                    <div class="role-name">Führungskraft</div>
+                    <div class="role-desc">Change, agile Methoden, Team</div>
+                  </div>
+                </button>
+
+                <button
+                  class="role-step"
+                  id="role-so"
+                  onclick="selectRole(this, 'so')"
+                  aria-pressed="false"
+                >
+                  <span class="role-num" aria-hidden="true">04</span>
+                  <div class="role-info">
+                    <div class="role-name">Sonstige</div>
+                    <div class="role-desc">Forschung, Beratung, Interessierte</div>
+                  </div>
+                </button>
+              </div>
+
+              <!-- Suggestions -->
+              <div>
+                <p class="sugg-label">Vorschläge für Sie</p>
+                <div class="suggestions" id="suggestions-list" aria-label="Gesprächseinstiege">
+                  <button class="sugg-btn" onclick="startChat()" aria-label="Frage stellen: Wie entwickle ich eine KI-Strategie für mein KMU?">
+                    <span>Wie entwickle ich eine KI-Strategie für mein KMU?</span>
+                    <span class="sugg-arrow" aria-hidden="true">→</span>
+                  </button>
+                  <button class="sugg-btn" onclick="startChat()" aria-label="Frage stellen: Welche Förderprogramme gibt es für die Transformation?">
+                    <span>Welche Förderprogramme gibt es für die Transformation?</span>
+                    <span class="sugg-arrow" aria-hidden="true">→</span>
+                  </button>
+                  <button class="sugg-btn" onclick="startChat()" aria-label="Frage stellen: Zeig mir den Selbstcheck für mein Unternehmen.">
+                    <span>Zeig mir den Selbstcheck für mein Unternehmen.</span>
+                    <span class="sugg-arrow" aria-hidden="true">→</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Input area -->
+            <div class="w-input-area">
+              <div class="w-input-row">
+                <input
+                  class="w-input"
+                  type="text"
+                  id="welcome-input"
+                  placeholder="Ihre Frage..."
+                  maxlength="500"
+                  aria-label="Nachricht eingeben"
+                  oninput="updateCounter(this, 'welcome-counter', 500)"
+                  onkeydown="handleKey(event)"
+                  autocomplete="off"
+                >
+                <button class="w-send-btn" onclick="startChat()" aria-label="Nachricht senden">
+                  Senden
+                </button>
+              </div>
+              <div class="w-char-counter" id="welcome-counter" aria-live="polite">0 / 500</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           TAB 2 – CHAT VERLAUF
+      ============================================================ -->
+      <section
+        class="tab-panel"
+        id="panel-chat"
+        role="tabpanel"
+        aria-labelledby="tab-chat"
+      >
+        <div class="section-header">
+          <h2>Chat-Verlauf</h2>
+          <p>Vollständige Gesprächsansicht mit KI-Antwortkarten, Quellenangaben und Feedback</p>
+        </div>
+
+        <div class="stage">
+          <div
+            class="widget"
+            role="dialog"
+            aria-label="Transform-Assistent Chatbot"
+            aria-describedby="ai-disclosure-text-3"
+          >
+            <!-- Widget header -->
+            <div class="w-head">
+              <div class="w-head-left">
+                <div class="w-head-dot" aria-hidden="true"></div>
+                <span class="w-head-name">Transform-Assistent</span>
+              </div>
+              <div class="w-online-badge" aria-label="Status: Online">
+                <span class="w-online-dot" aria-hidden="true"></span>
+                Online
+              </div>
+            </div>
+
+            <!-- Chat log -->
+            <div
+              class="w-body"
+              id="chat-log"
+              role="log"
+              aria-live="polite"
+              aria-label="Chatverlauf"
+            >
+
+              <!-- User message 1 -->
+              <div class="msg-user-wrap">
+                <div class="msg-user-row">
+                  <p class="msg-user-text">Wie entwickle ich eine KI-Strategie für mein KMU?</p>
+                  <div class="msg-user-avatar" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="12" cy="8" r="4" fill="#ffffff" opacity="0.9"/>
+                      <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="#ffffff" opacity="0.7"/>
+                    </svg>
+                  </div>
+                </div>
+                <time class="msg-user-time" datetime="2026-03-20T09:14:00">09:14</time>
+              </div>
+
+              <!-- AI response card 1 -->
+              <article
+                class="ai-card"
+                data-ai-generated="true"
+                data-ai-model="transform-assistant-v1"
+              >
+                <div class="ai-card-meta">
+                  <span class="ai-type-badge llm">LLM</span>
+                  <span class="ai-model-badge">mistral-7b</span>
+                  <time class="ai-time" datetime="2026-03-20T09:14:03">09:14 · 2,8 s</time>
+                </div>
+
+                <h4>KI-Strategie in 5 Schritten für Ihr KMU</h4>
+
+                <p>
+                  Eine erfolgreiche KI-Strategie beginnt mit einer ehrlichen Bestandsaufnahme<sup><button class="footnote-ref" onclick="toggleSources(document.querySelector('#fn-toggle-1'))" aria-label="Quelle 1 anzeigen">[1]</button></sup>.
+                  Analysieren Sie zunächst Ihre Datenbasis und identifizieren Sie die drei größten Effizienzpotenziale in Ihren Prozessen.
+                  Danach priorisieren Sie Pilotprojekte mit klarem ROI-Potenzial<sup><button class="footnote-ref" onclick="toggleSources(document.querySelector('#fn-toggle-1'))" aria-label="Quelle 2 anzeigen">[2]</button></sup>
+                  und bauen Sie intern Kompetenzen auf, bevor Sie skalieren.
+                </p>
+
+                <button
+                  class="footnotes-toggle"
+                  id="fn-toggle-1"
+                  onclick="toggleSources(this)"
+                  aria-expanded="false"
+                  aria-controls="fn-panel-1"
+                >
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  2 Quellen anzeigen
+                </button>
+
+                <div class="footnotes" id="fn-panel-1">
+                  <ol>
+                    <li>KI-Strategie für KMU – <a href="https://jetzt-transformieren.de/ki-strategie" target="_blank" rel="noopener">jetzt-transformieren.de/ki-strategie</a></li>
+                    <li>ROI-Kalkulator Digitalisierung – <a href="https://jetzt-transformieren.de/roi" target="_blank" rel="noopener">jetzt-transformieren.de/roi</a></li>
+                  </ol>
+                </div>
+
+                <div class="feedback-row">
+                  <span class="feedback-label">War diese Antwort hilfreich?</span>
+                  <button
+                    class="feedback-btn"
+                    aria-label="Hilfreich – Daumen hoch"
+                    aria-pressed="false"
+                    onclick="toggleFeedback(this, 'up')"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                      <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z" stroke="var(--navy)" stroke-width="2" stroke-linejoin="round"/>
+                      <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" stroke="var(--navy)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                  <button
+                    class="feedback-btn"
+                    aria-label="Nicht hilfreich – Daumen runter"
+                    aria-pressed="false"
+                    onclick="toggleFeedback(this, 'down')"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                      <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z" stroke="var(--navy)" stroke-width="2" stroke-linejoin="round"/>
+                      <path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17" stroke="var(--navy)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                </div>
+              </article>
+
+              <!-- User message 2 -->
+              <div class="msg-user-wrap">
+                <div class="msg-user-row">
+                  <p class="msg-user-text">Welche Förderprogramme gibt es konkret?</p>
+                  <div class="msg-user-avatar" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="12" cy="8" r="4" fill="#ffffff" opacity="0.9"/>
+                      <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="#ffffff" opacity="0.7"/>
+                    </svg>
+                  </div>
+                </div>
+                <time class="msg-user-time" datetime="2026-03-20T09:15:00">09:15</time>
+              </div>
+
+              <!-- AI response card 2 -->
+              <article
+                class="ai-card"
+                data-ai-generated="true"
+                data-ai-model="transform-assistant-v1"
+              >
+                <div class="ai-card-meta">
+                  <span class="ai-type-badge faq">FAQ</span>
+                  <span class="ai-model-badge">wissensbasis</span>
+                  <time class="ai-time" datetime="2026-03-20T09:15:01">09:15 · 0,4 s</time>
+                </div>
+
+                <h4>Förderprogramme für KMU-Digitalisierung 2026</h4>
+
+                <p>
+                  Das Bundesministerium stellt über <strong>go-digital</strong><sup><button class="footnote-ref" onclick="toggleSources(document.querySelector('#fn-toggle-2'))" aria-label="Quelle 1 anzeigen">[1]</button></sup>
+                  bis zu 50 % der Kosten für Digitalisierungsberatung. Das Programm
+                  <strong>Digital Jetzt</strong><sup><button class="footnote-ref" onclick="toggleSources(document.querySelector('#fn-toggle-2'))" aria-label="Quelle 2 anzeigen">[2]</button></sup>
+                  fördert Investitionen in digitale Technologien und Mitarbeitendenschulung mit bis zu 50.000 €. Ergänzend bieten Länder eigene Programme an<sup><button class="footnote-ref" onclick="toggleSources(document.querySelector('#fn-toggle-2'))" aria-label="Quelle 3 anzeigen">[3]</button></sup>.
+                </p>
+
+                <button
+                  class="footnotes-toggle"
+                  id="fn-toggle-2"
+                  onclick="toggleSources(this)"
+                  aria-expanded="false"
+                  aria-controls="fn-panel-2"
+                >
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  3 Quellen anzeigen
+                </button>
+
+                <div class="footnotes" id="fn-panel-2">
+                  <ol>
+                    <li>go-digital Programm – <a href="https://www.bmwk.de/go-digital" target="_blank" rel="noopener">bmwk.de/go-digital</a></li>
+                    <li>Digital Jetzt – <a href="https://www.bmwk.de/digital-jetzt" target="_blank" rel="noopener">bmwk.de/digital-jetzt</a></li>
+                    <li>Landesförderprogramme – <a href="https://jetzt-transformieren.de/foerderung" target="_blank" rel="noopener">jetzt-transformieren.de/foerderung</a></li>
+                  </ol>
+                </div>
+
+                <div class="feedback-row">
+                  <span class="feedback-label">War diese Antwort hilfreich?</span>
+                  <button
+                    class="feedback-btn"
+                    aria-label="Hilfreich – Daumen hoch"
+                    aria-pressed="true"
+                    onclick="toggleFeedback(this, 'up')"
+                    style="background: var(--navy); border-color: var(--navy);"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                      <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+                      <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                  <button
+                    class="feedback-btn"
+                    aria-label="Nicht hilfreich – Daumen runter"
+                    aria-pressed="false"
+                    onclick="toggleFeedback(this, 'down')"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                      <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z" stroke="var(--navy)" stroke-width="2" stroke-linejoin="round"/>
+                      <path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17" stroke="var(--navy)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                </div>
+              </article>
+
+              <!-- Typing indicator -->
+              <div class="typing-wrap" role="status" aria-label="Der Assistent tippt...">
+                <div class="typing-indicator">
+                  <div class="typing-dot"></div>
+                  <div class="typing-dot"></div>
+                  <div class="typing-dot"></div>
+                </div>
+              </div>
+
+            </div><!-- /.w-body -->
+
+            <!-- Input area -->
+            <div class="w-input-area">
+              <div class="w-input-row">
+                <input
+                  class="w-input"
+                  type="text"
+                  id="chat-input"
+                  placeholder="Ihre Frage..."
+                  maxlength="500"
+                  aria-label="Nachricht eingeben"
+                  oninput="updateCounter(this, 'chat-counter', 500)"
+                  onkeydown="handleKey(event)"
+                  autocomplete="off"
+                >
+                <button class="w-send-btn" aria-label="Nachricht senden">
+                  Senden
+                </button>
+              </div>
+              <div class="w-char-counter" id="chat-counter" aria-live="polite">0 / 500</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           TAB 3 – ZUSTÄNDE / STATES
+      ============================================================ -->
+      <section
+        class="tab-panel"
+        id="panel-states"
+        role="tabpanel"
+        aria-labelledby="tab-states"
+      >
+        <div class="section-header">
+          <h2>Systemzustände</h2>
+          <p>Vier Antwortypen: FAQ-Treffer, LLM-Generierung, Reflexionsregel, Low-Confidence-Fallback</p>
+        </div>
+
+        <div class="states-grid">
+
+          <!-- State 1: FAQ Hit -->
+          <div class="state-item">
+            <h3>1 – FAQ-Treffer</h3>
+            <div class="widget" style="border-radius: 16px;">
+              <div class="w-head">
+                <div class="w-head-left">
+                  <div class="w-head-dot" aria-hidden="true"></div>
+                  <span class="w-head-name">Transform-Assistent</span>
+                </div>
+                <div class="w-online-badge">
+                  <span class="w-online-dot" aria-hidden="true"></span>Online
+                </div>
+              </div>
+              <div class="w-body" role="log" aria-live="polite" style="min-height: 220px; max-height: 280px;">
+                <div class="msg-user-wrap">
+                  <div class="msg-user-row">
+                    <p class="msg-user-text">Was ist der Selbstcheck?</p>
+                    <div class="msg-user-avatar" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#fff" opacity=".9"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="#fff" opacity=".7"/></svg>
+                    </div>
+                  </div>
+                  <time class="msg-user-time" datetime="2026-03-20T10:00:00">10:00</time>
+                </div>
+                <article class="ai-card" data-ai-generated="true" data-ai-model="transform-assistant-v1">
+                  <div class="ai-card-meta">
+                    <span class="ai-type-badge faq">FAQ</span>
+                    <span class="ai-model-badge">wissensbasis</span>
+                    <time class="ai-time" datetime="2026-03-20T10:00:00">0,3 s</time>
+                  </div>
+                  <h4>Der Transformations-Selbstcheck</h4>
+                  <p>Unser kostenloser Selbstcheck bewertet den digitalen Reifegrad Ihres Unternehmens in 5 Dimensionen und gibt konkrete Handlungsempfehlungen.<sup>[1]</sup></p>
+                </article>
+              </div>
+              <div class="w-input-area">
+                <div class="w-input-row">
+                  <input class="w-input" type="text" placeholder="Ihre Frage..." aria-label="Nachricht eingeben">
+                  <button class="w-send-btn">Senden</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- State 2: LLM Response -->
+          <div class="state-item">
+            <h3>2 – LLM-Generierung</h3>
+            <div class="widget" style="border-radius: 16px;">
+              <div class="w-head">
+                <div class="w-head-left">
+                  <div class="w-head-dot" aria-hidden="true"></div>
+                  <span class="w-head-name">Transform-Assistent</span>
+                </div>
+                <div class="w-online-badge">
+                  <span class="w-online-dot" aria-hidden="true"></span>Online
+                </div>
+              </div>
+              <div class="w-body" role="log" aria-live="polite" style="min-height: 220px; max-height: 280px;">
+                <div class="msg-user-wrap">
+                  <div class="msg-user-row">
+                    <p class="msg-user-text">Erkläre mir VUCA in einfachen Worten.</p>
+                    <div class="msg-user-avatar" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#fff" opacity=".9"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="#fff" opacity=".7"/></svg>
+                    </div>
+                  </div>
+                  <time class="msg-user-time" datetime="2026-03-20T10:05:00">10:05</time>
+                </div>
+                <article class="ai-card" data-ai-generated="true" data-ai-model="transform-assistant-v1">
+                  <div class="ai-card-meta">
+                    <span class="ai-type-badge llm">LLM</span>
+                    <span class="ai-model-badge">mistral-7b</span>
+                    <time class="ai-time" datetime="2026-03-20T10:05:03">3,1 s</time>
+                  </div>
+                  <h4>VUCA – die vier Dimensionen moderner Arbeitswelten</h4>
+                  <p>VUCA steht für Volatility, Uncertainty, Complexity, Ambiguity – die vier Kräfte, die heutige Märkte prägen. Für KMU bedeutet das: flexibel bleiben, schnell lernen.</p>
+                </article>
+              </div>
+              <div class="w-input-area">
+                <div class="w-input-row">
+                  <input class="w-input" type="text" placeholder="Ihre Frage..." aria-label="Nachricht eingeben">
+                  <button class="w-send-btn">Senden</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- State 3: Reflexion -->
+          <div class="state-item">
+            <h3>3 – Reflexionsregel</h3>
+            <div class="widget" style="border-radius: 16px;">
+              <div class="w-head">
+                <div class="w-head-left">
+                  <div class="w-head-dot" aria-hidden="true"></div>
+                  <span class="w-head-name">Transform-Assistent</span>
+                </div>
+                <div class="w-online-badge">
+                  <span class="w-online-dot" aria-hidden="true"></span>Online
+                </div>
+              </div>
+              <div class="w-body" role="log" aria-live="polite" style="min-height: 220px; max-height: 280px;">
+                <div class="msg-user-wrap">
+                  <div class="msg-user-row">
+                    <p class="msg-user-text">Ist KI wirklich sinnvoll für uns?</p>
+                    <div class="msg-user-avatar" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#fff" opacity=".9"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="#fff" opacity=".7"/></svg>
+                    </div>
+                  </div>
+                  <time class="msg-user-time" datetime="2026-03-20T10:10:00">10:10</time>
+                </div>
+                <article class="ai-card" data-ai-generated="true" data-ai-model="transform-assistant-v1">
+                  <div class="ai-card-meta">
+                    <span class="ai-type-badge reflex">Reflexion</span>
+                    <span class="ai-model-badge">regelwerk</span>
+                    <time class="ai-time" datetime="2026-03-20T10:10:01">0,8 s</time>
+                  </div>
+                  <h4>Eine gute Frage – lassen Sie uns nachdenken</h4>
+                  <p>Statt einer pauschalen Antwort schlage ich vor, Ihren konkreten Fall zu beleuchten: Welche Prozesse kosten Sie heute die meiste Zeit? Der Selbstcheck hilft dabei weiter.</p>
+                </article>
+              </div>
+              <div class="w-input-area">
+                <div class="w-input-row">
+                  <input class="w-input" type="text" placeholder="Ihre Frage..." aria-label="Nachricht eingeben">
+                  <button class="w-send-btn">Senden</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- State 4: Low-confidence fallback -->
+          <div class="state-item">
+            <h3>4 – Low-Confidence-Fallback</h3>
+            <div class="widget" style="border-radius: 16px;">
+              <div class="w-head">
+                <div class="w-head-left">
+                  <div class="w-head-dot" aria-hidden="true"></div>
+                  <span class="w-head-name">Transform-Assistent</span>
+                </div>
+                <div class="w-online-badge">
+                  <span class="w-online-dot" aria-hidden="true"></span>Online
+                </div>
+              </div>
+              <div class="w-body" role="log" aria-live="polite" style="min-height: 220px; max-height: 280px;">
+                <div class="msg-user-wrap">
+                  <div class="msg-user-row">
+                    <p class="msg-user-text">Wie wird das Wetter morgen?</p>
+                    <div class="msg-user-avatar" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#fff" opacity=".9"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="#fff" opacity=".7"/></svg>
+                    </div>
+                  </div>
+                  <time class="msg-user-time" datetime="2026-03-20T10:15:00">10:15</time>
+                </div>
+                <article class="ai-card" data-ai-generated="true" data-ai-model="transform-assistant-v1">
+                  <div class="ai-card-meta">
+                    <span class="ai-type-badge fallback">Fallback</span>
+                    <span class="ai-model-badge">konfidenz: 0,12</span>
+                    <time class="ai-time" datetime="2026-03-20T10:15:01">0,6 s</time>
+                  </div>
+                  <h4>Diese Frage liegt außerhalb meines Themenbereichs</h4>
+                  <p>Ich bin spezialisiert auf digitale Transformation und KI für KMU. Für Ihre Frage bin ich leider nicht zuständig – darf ich Ihnen stattdessen beim Thema Transformation helfen?</p>
+                </article>
+              </div>
+              <div class="w-input-area">
+                <div class="w-input-row">
+                  <input class="w-input" type="text" placeholder="Ihre Frage..." aria-label="Nachricht eingeben">
+                  <button class="w-send-btn">Senden</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /.states-grid -->
+      </section>
+
+      <!-- ============================================================
+           TAB 4 – MOBILE
+      ============================================================ -->
+      <section
+        class="tab-panel"
+        id="panel-mobile"
+        role="tabpanel"
+        aria-labelledby="tab-mobile"
+      >
+        <div class="section-header">
+          <h2>Mobile-Ansicht</h2>
+          <p>Widget im 375px-Smartphone-Kontext</p>
+        </div>
+
+        <div class="phone-stage">
+          <div class="phone-mock" aria-label="Smartphone-Vorschau">
+            <div class="phone-screen">
+              <div class="phone-status-bar">
+                <span class="phone-status-time">09:41</span>
+                <div class="phone-status-icons">
+                  <span class="phone-status-icon">●●●</span>
+                  <span class="phone-status-icon">WiFi</span>
+                  <span class="phone-status-icon">▮</span>
+                </div>
+              </div>
+
+              <div class="phone-screen-relative" style="position: relative;">
+                <!-- Mini browser bar -->
+                <div style="background: #f0f0f0; padding: 6px 12px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #ddd;">
+                  <div style="flex:1; background: white; border-radius: 20px; padding: 4px 12px; font-size: 11px; color: #666;">jetzt-transformieren.de</div>
+                </div>
+
+                <!-- Page content behind widget -->
+                <div style="background: #eeece7; padding: 16px; min-height: 200px;">
+                  <div style="background: white; border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+                    <div style="height: 10px; background: #e0e0e0; border-radius: 4px; margin-bottom: 8px; width: 70%;"></div>
+                    <div style="height: 8px; background: #eee; border-radius: 4px; margin-bottom: 6px;"></div>
+                    <div style="height: 8px; background: #eee; border-radius: 4px; width: 85%;"></div>
+                  </div>
+                  <div style="background: white; border-radius: 8px; padding: 12px;">
+                    <div style="height: 10px; background: #e0e0e0; border-radius: 4px; margin-bottom: 8px; width: 50%;"></div>
+                    <div style="height: 8px; background: #eee; border-radius: 4px; margin-bottom: 6px;"></div>
+                    <div style="height: 8px; background: #eee; border-radius: 4px; width: 60%;"></div>
+                  </div>
+                </div>
+
+                <!-- Widget overlay on mobile -->
+                <div style="position: absolute; bottom: 0; left: 0; right: 0;">
+                  <div class="phone-widget">
+                    <div class="w-head" style="border-radius: 0;">
+                      <div class="w-head-left">
+                        <div class="w-head-dot" aria-hidden="true"></div>
+                        <span class="w-head-name">Transform-Assistent</span>
+                      </div>
+                      <div class="w-online-badge">
+                        <span class="w-online-dot" aria-hidden="true"></span>Online
+                      </div>
+                    </div>
+                    <div
+                      class="w-body"
+                      role="log"
+                      aria-live="polite"
+                      style="min-height: 200px; max-height: 240px;"
+                    >
+                      <div class="msg-user-wrap">
+                        <div class="msg-user-row">
+                          <p class="msg-user-text" style="font-size: 13px;">KI-Strategie für mein KMU?</p>
+                          <div class="msg-user-avatar" aria-hidden="true" style="width: 24px; height: 24px;">
+                            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#fff" opacity=".9"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="#fff" opacity=".7"/></svg>
+                          </div>
+                        </div>
+                        <time class="msg-user-time" datetime="2026-03-20T09:14:00">09:14</time>
+                      </div>
+                      <article class="ai-card" data-ai-generated="true" data-ai-model="transform-assistant-v1" style="padding: 12px;">
+                        <div class="ai-card-meta">
+                          <span class="ai-type-badge llm">LLM</span>
+                          <time class="ai-time" datetime="2026-03-20T09:14:03">2,8 s</time>
+                        </div>
+                        <h4 style="font-size: 13px;">KI-Strategie in 5 Schritten</h4>
+                        <p style="font-size: 12px;">Beginnen Sie mit einer Bestandsaufnahme Ihrer Datenbasis und identifizieren Sie die drei größten Effizienzpotenziale.</p>
+                      </article>
+                    </div>
+                    <div class="w-input-area">
+                      <div class="w-input-row">
+                        <input class="w-input" type="text" placeholder="Ihre Frage..." aria-label="Nachricht eingeben" style="font-size: 12px;">
+                        <button class="w-send-btn" style="font-size: 12px; padding: 6px 14px;">Senden</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- FAB button shown collapsed (widget open) -->
+                <!-- When widget is closed, FAB would appear here -->
+              </div>
+
+            </div><!-- /.phone-screen -->
+          </div><!-- /.phone-mock -->
+        </div><!-- /.phone-stage -->
+
+        <!-- FAB state explanation -->
+        <div style="margin-top: 28px; display: flex; gap: 24px; align-items: flex-start; justify-content: center;">
+          <div style="text-align: center;">
+            <div style="width: 56px; height: 56px; background: var(--orange); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; box-shadow: 0 4px 16px rgba(255,102,0,0.4);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <p style="font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;">Widget geschlossen</p>
+          </div>
+          <div style="text-align: center;">
+            <div style="width: 56px; height: 56px; background: var(--navy); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; box-shadow: 0 4px 16px rgba(36,88,131,0.3);">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M18 6L6 18M6 6l12 12" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <p style="font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;">Widget offen</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           TAB 5 – ADMIN
+      ============================================================ -->
+      <section
+        class="tab-panel"
+        id="panel-admin"
+        role="tabpanel"
+        aria-labelledby="tab-admin"
+      >
+        <div class="section-header">
+          <h2>Admin-Panel</h2>
+          <p>Dashboard, FAQ-Verwaltung, Wissensbasis, System-Prompts und Monitoring</p>
+        </div>
+
+        <div class="admin-wrap">
+          <!-- Admin top nav -->
+          <nav class="admin-topnav" role="navigation" aria-label="Admin-Navigation">
+            <button
+              class="admin-nav-btn active"
+              id="anav-dashboard"
+              onclick="showAdminSection('dashboard')"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+                <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+                <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+                <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              Dashboard
+            </button>
+            <button
+              class="admin-nav-btn"
+              id="anav-faq"
+              onclick="showAdminSection('faq')"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <path d="M9 9a3 3 0 1 1 6 0c0 2-3 3-3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="12" cy="17" r="0.5" fill="currentColor" stroke="currentColor"/>
+              </svg>
+              FAQ
+            </button>
+            <button
+              class="admin-nav-btn"
+              id="anav-wissen"
+              onclick="showAdminSection('wissen')"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              Wissensbasis
+            </button>
+            <button
+              class="admin-nav-btn"
+              id="anav-prompts"
+              onclick="showAdminSection('prompts')"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <polyline points="16 18 22 12 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <polyline points="8 6 2 12 8 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              System-Prompts
+            </button>
+            <button
+              class="admin-nav-btn"
+              id="anav-monitoring"
+              onclick="showAdminSection('monitoring')"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Monitoring
+            </button>
+          </nav>
+
+          <div class="admin-content">
+
+            <!-- DASHBOARD SECTION -->
+            <div class="admin-section active" id="asec-dashboard">
+              <div class="kpi-row">
+                <div class="kpi-card">
+                  <div class="kpi-number">1.284</div>
+                  <div class="kpi-label">Anfragen (7 Tage)</div>
+                  <div class="kpi-delta">↑ +12% vs. Vorwoche</div>
+                </div>
+                <div class="kpi-card">
+                  <div class="kpi-number">78%</div>
+                  <div class="kpi-label">FAQ-Trefferquote</div>
+                  <div class="kpi-delta">↑ +3% vs. Vorwoche</div>
+                </div>
+                <div class="kpi-card">
+                  <div class="kpi-number">1,8 s</div>
+                  <div class="kpi-label">Ø Antwortzeit</div>
+                  <div class="kpi-delta" style="color: #e65100;">↓ –0,2 s</div>
+                </div>
+                <div class="kpi-card">
+                  <div class="kpi-number">94%</div>
+                  <div class="kpi-label">Positives Feedback</div>
+                  <div class="kpi-delta">↑ +1% vs. Vorwoche</div>
+                </div>
+              </div>
+
+              <div class="chart-placeholder" aria-label="Anfragen-Verlaufschart (Platzhalter)">
+                Anfragen-Verlauf – Chart-Platzhalter (7 Tage)
+              </div>
+
+              <p class="admin-section-title">Letzte Anfragen <small style="font-weight:400;color:var(--muted);font-size:12px;">· pseudonymisiert · Auto-Löschung nach 24 h</small></p>
+              <div class="admin-table-wrap">
+                <table class="admin-table" aria-label="Letzte Anfragen (pseudonymisiert)">
+                  <thead>
+                    <tr>
+                      <th scope="col">Zeit</th>
+                      <th scope="col">Rolle</th>
+                      <th scope="col">Session-ID</th>
+                      <th scope="col">Typ</th>
+                      <th scope="col">Konfidenz</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><time datetime="2026-03-20T09:14:00">09:14</time></td>
+                      <td><span class="badge badge-blue">GF</span></td>
+                      <td><code style="font-size:11px;color:var(--muted);">7f3e2a1</code></td>
+                      <td><span class="badge badge-blue">LLM</span></td>
+                      <td>0,92</td>
+                    </tr>
+                    <tr>
+                      <td><time datetime="2026-03-20T09:12:00">09:12</time></td>
+                      <td><span class="badge badge-green">PM</span></td>
+                      <td><code style="font-size:11px;color:var(--muted);">b8c4d5e</code></td>
+                      <td><span class="badge badge-green">FAQ</span></td>
+                      <td>0,98</td>
+                    </tr>
+                    <tr>
+                      <td><time datetime="2026-03-20T09:10:00">09:10</time></td>
+                      <td><span class="badge badge-orange">FK</span></td>
+                      <td><code style="font-size:11px;color:var(--muted);">9a1f6c3</code></td>
+                      <td><span class="badge badge-orange">Reflexion</span></td>
+                      <td>0,71</td>
+                    </tr>
+                    <tr>
+                      <td><time datetime="2026-03-20T09:08:00">09:08</time></td>
+                      <td><span class="badge badge-grey">SO</span></td>
+                      <td><code style="font-size:11px;color:var(--muted);">4e2b8a7</code></td>
+                      <td><span class="badge badge-red">Fallback</span></td>
+                      <td>0,08</td>
+                    </tr>
+                    <tr>
+                      <td><time datetime="2026-03-20T09:06:00">09:06</time></td>
+                      <td><span class="badge badge-blue">GF</span></td>
+                      <td><code style="font-size:11px;color:var(--muted);">2d9c3f1</code></td>
+                      <td><span class="badge badge-green">FAQ</span></td>
+                      <td>0,96</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p style="font-size:11px;color:var(--muted);margin-top:6px;">Anfrageinhalte werden nicht gespeichert. Logs werden täglich um 00:00 Uhr automatisch gelöscht (DSGVO Art. 5 Abs. 1 lit. e).</p>
+              </div>
+            </div>
+
+            <!-- FAQ SECTION -->
+            <div class="admin-section" id="asec-faq">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <p class="admin-section-title" style="margin-bottom: 0;">FAQ-Einträge</p>
+                <button class="w-send-btn" style="font-size: 13px;">+ Neuer Eintrag</button>
+              </div>
+              <div class="admin-table-wrap">
+                <table class="admin-table" aria-label="FAQ-Einträge">
+                  <thead>
+                    <tr>
+                      <th scope="col">ID ↕</th>
+                      <th scope="col">Frage ↕</th>
+                      <th scope="col">Kategorie ↕</th>
+                      <th scope="col">Treffer ↕</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Aktion</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td style="font-family: monospace; font-size: 11px; color: var(--muted);">FAQ-001</td>
+                      <td>Was ist der Transformations-Selbstcheck?</td>
+                      <td><span class="tag">GF</span></td>
+                      <td>342</td>
+                      <td><span class="badge badge-green">Aktiv</span></td>
+                      <td><button class="edit-btn">Bearbeiten</button></td>
+                    </tr>
+                    <tr>
+                      <td style="font-family: monospace; font-size: 11px; color: var(--muted);">FAQ-002</td>
+                      <td>Welche Förderprogramme gibt es für KMU?</td>
+                      <td><span class="tag">GF</span></td>
+                      <td>289</td>
+                      <td><span class="badge badge-green">Aktiv</span></td>
+                      <td><button class="edit-btn">Bearbeiten</button></td>
+                    </tr>
+                    <tr>
+                      <td style="font-family: monospace; font-size: 11px; color: var(--muted);">FAQ-003</td>
+                      <td>Wie qualifiziere ich Mitarbeitende für KI?</td>
+                      <td><span class="tag">PM</span></td>
+                      <td>218</td>
+                      <td><span class="badge badge-green">Aktiv</span></td>
+                      <td><button class="edit-btn">Bearbeiten</button></td>
+                    </tr>
+                    <tr>
+                      <td style="font-family: monospace; font-size: 11px; color: var(--muted);">FAQ-004</td>
+                      <td>Was bedeutet VUCA für Führungskräfte?</td>
+                      <td><span class="tag">FK</span></td>
+                      <td>175</td>
+                      <td><span class="badge badge-green">Aktiv</span></td>
+                      <td><button class="edit-btn">Bearbeiten</button></td>
+                    </tr>
+                    <tr>
+                      <td style="font-family: monospace; font-size: 11px; color: var(--muted);">FAQ-005</td>
+                      <td>Wie gestalte ich agile Meetings effektiv?</td>
+                      <td><span class="tag">FK</span></td>
+                      <td>144</td>
+                      <td><span class="badge badge-orange">Entwurf</span></td>
+                      <td><button class="edit-btn">Bearbeiten</button></td>
+                    </tr>
+                    <tr>
+                      <td style="font-family: monospace; font-size: 11px; color: var(--muted);">FAQ-006</td>
+                      <td>Welche Technologien prägen die Zukunft der KMU?</td>
+                      <td><span class="tag">SO</span></td>
+                      <td>98</td>
+                      <td><span class="badge badge-green">Aktiv</span></td>
+                      <td><button class="edit-btn">Bearbeiten</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Reflexionskatalog -->
+              <div style="margin-top: 32px;">
+                <p class="admin-section-title">Reflexionskatalog</p>
+                <div class="reflex-grid">
+                  <div class="reflex-card">
+                    <div class="reflex-card-trigger">Trigger: Widerstand / Konflikt</div>
+                    <div class="reflex-card-action">Statt Ratschlag: Reflexionsfragen stellen, konkrete Situation erfragen</div>
+                    <span class="reflex-card-badge">Reflexion</span>
+                  </div>
+                  <div class="reflex-card">
+                    <div class="reflex-card-trigger">Trigger: Sinnfrage KI</div>
+                    <div class="reflex-card-action">Nutzwert-Analyse anbieten, zum Selbstcheck weiterleiten</div>
+                    <span class="reflex-card-badge">Reflexion</span>
+                  </div>
+                  <div class="reflex-card">
+                    <div class="reflex-card-trigger">Trigger: Out-of-Scope</div>
+                    <div class="reflex-card-action">Freundliche Ablehnung + Rückleitung zu Kernthema</div>
+                    <span class="reflex-card-badge">Fallback</span>
+                  </div>
+                  <div class="reflex-card">
+                    <div class="reflex-card-trigger">Trigger: Emotionaler Stress</div>
+                    <div class="reflex-card-action">Empathie zeigen, professionelle Unterstützung empfehlen</div>
+                    <span class="reflex-card-badge">Reflexion</span>
+                  </div>
+                  <div class="reflex-card">
+                    <div class="reflex-card-trigger">Trigger: Rechtsfrage</div>
+                    <div class="reflex-card-action">Haftungshinweis + Verweis auf zuständige Fachstelle</div>
+                    <span class="reflex-card-badge">Fallback</span>
+                  </div>
+                  <div class="reflex-card">
+                    <div class="reflex-card-trigger">Trigger: Förderantrag</div>
+                    <div class="reflex-card-action">Orientierung geben, auf offizielle Programme verweisen</div>
+                    <span class="reflex-card-badge">Reflexion</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- WISSENSBASIS SECTION -->
+            <div class="admin-section" id="asec-wissen">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <p class="admin-section-title" style="margin-bottom: 0;">Wissensbasis-Dokumente</p>
+                <button class="w-send-btn" style="font-size: 13px;">+ Dokument hochladen</button>
+              </div>
+              <div class="wissen-grid">
+                <div class="wissen-card">
+                  <div class="wissen-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="var(--navy)" stroke-width="2" stroke-linejoin="round"/>
+                      <polyline points="14 2 14 8 20 8" stroke="var(--navy)" stroke-width="2" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                  <div class="wissen-info">
+                    <h4>KI-Strategie-Leitfaden 2026.pdf</h4>
+                    <p>48 Seiten · Eingebettet: 2026-02-15 · 1.240 Chunks</p>
+                  </div>
+                </div>
+                <div class="wissen-card">
+                  <div class="wissen-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="var(--navy)" stroke-width="2" stroke-linejoin="round"/>
+                      <polyline points="14 2 14 8 20 8" stroke="var(--navy)" stroke-width="2" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                  <div class="wissen-info">
+                    <h4>Förderprogramme_BMWi_2026.pdf</h4>
+                    <p>32 Seiten · Eingebettet: 2026-01-20 · 820 Chunks</p>
+                  </div>
+                </div>
+                <div class="wissen-card">
+                  <div class="wissen-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                      <rect x="3" y="3" width="18" height="18" rx="2" stroke="var(--navy)" stroke-width="2"/>
+                      <path d="M3 9h18M9 21V9" stroke="var(--navy)" stroke-width="2"/>
+                    </svg>
+                  </div>
+                  <div class="wissen-info">
+                    <h4>FAQ-Rohdaten.xlsx</h4>
+                    <p>284 Einträge · Eingebettet: 2026-03-01 · 284 Chunks</p>
+                  </div>
+                </div>
+                <div class="wissen-card">
+                  <div class="wissen-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" stroke="var(--navy)" stroke-width="2"/>
+                      <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="var(--navy)" stroke-width="2"/>
+                    </svg>
+                  </div>
+                  <div class="wissen-info">
+                    <h4>jetzt-transformieren.de (Webscrape)</h4>
+                    <p>87 Seiten · Eingebettet: 2026-03-10 · 2.140 Chunks</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SYSTEM PROMPTS SECTION -->
+            <div class="admin-section" id="asec-prompts">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <p class="admin-section-title" style="margin-bottom: 0;">System-Prompts</p>
+                <button class="w-send-btn" style="font-size: 13px;">+ Neuer Prompt</button>
+              </div>
+
+              <div class="prompt-card">
+                <div class="prompt-card-header">
+                  <span class="prompt-card-name">Standard-Prompt (alle Rollen)</span>
+                  <div style="display: flex; gap: 8px; align-items: center;">
+                    <span class="badge badge-green">Aktiv</span>
+                    <button class="edit-btn">Bearbeiten</button>
+                  </div>
+                </div>
+                <div class="prompt-card-body">
+Du bist ein KI-Assistent für jetzt-transformieren.de, eine Plattform der f-bb gGmbH zur
+Unterstützung von KMU bei der digitalen Transformation. Beantworte Fragen sachlich, präzise
+und zielgruppengerecht. Weise auf deine KI-Natur gemäß EU AI Act Art. 50 hin. Bei Unsicherheit
+verweise auf offizielle Quellen. Sprache: Deutsch, formell (Sie).
+                </div>
+              </div>
+
+              <div class="prompt-card">
+                <div class="prompt-card-header">
+                  <span class="prompt-card-name">Rollen-Prompt: Geschäftsführung</span>
+                  <div style="display: flex; gap: 8px; align-items: center;">
+                    <span class="badge badge-green">Aktiv</span>
+                    <button class="edit-btn">Bearbeiten</button>
+                  </div>
+                </div>
+                <div class="prompt-card-body">
+Der Nutzer ist eine Führungskraft auf Geschäftsführerebene. Fokussiere auf strategische Aspekte,
+ROI, Fördermöglichkeiten und unternehmerische Entscheidungen. Verwende konkrete Zahlen und
+Benchmarks wo verfügbar.
+                </div>
+              </div>
+
+              <div class="prompt-card">
+                <div class="prompt-card-header">
+                  <span class="prompt-card-name">Reflexions-Prompt</span>
+                  <div style="display: flex; gap: 8px; align-items: center;">
+                    <span class="badge badge-orange">Entwurf</span>
+                    <button class="edit-btn">Bearbeiten</button>
+                  </div>
+                </div>
+                <div class="prompt-card-body">
+Bei komplexen oder emotionalen Fragen stelle zuerst klärende Gegenfragen, bevor du eine
+Antwort formulierst. Ziel ist es, die spezifische Situation des Nutzers besser zu verstehen
+und individuell relevante Impulse zu geben.
+                </div>
+              </div>
+            </div>
+
+            <!-- MONITORING SECTION -->
+            <div class="admin-section" id="asec-monitoring">
+              <p class="admin-section-title">System-Status</p>
+              <div class="monitor-grid">
+                <div class="monitor-card">
+                  <div class="monitor-card-title">API-Status</div>
+                  <div class="monitor-row">
+                    <span class="monitor-key">Mistral API</span>
+                    <span class="monitor-val"><span class="badge badge-green">Online</span></span>
+                  </div>
+                  <div class="monitor-row">
+                    <span class="monitor-key">Vektordatenbank</span>
+                    <span class="monitor-val"><span class="badge badge-green">Online</span></span>
+                  </div>
+                  <div class="monitor-row">
+                    <span class="monitor-key">FAQ-Index</span>
+                    <span class="monitor-val"><span class="badge badge-green">Aktuell</span></span>
+                  </div>
+                  <div class="monitor-row">
+                    <span class="monitor-key">Redis Cache</span>
+                    <span class="monitor-val"><span class="badge badge-green">Online</span></span>
+                  </div>
+                </div>
+
+                <div class="monitor-card">
+                  <div class="monitor-card-title">Performance (letzte 24 h)</div>
+                  <div class="monitor-row">
+                    <span class="monitor-key">Ø Antwortzeit</span>
+                    <span class="monitor-val">1,8 s</span>
+                  </div>
+                  <div class="monitor-row">
+                    <span class="monitor-key">P95 Antwortzeit</span>
+                    <span class="monitor-val">4,2 s</span>
+                  </div>
+                  <div class="monitor-row">
+                    <span class="monitor-key">Token pro Anfrage (Ø)</span>
+                    <span class="monitor-val">384</span>
+                  </div>
+                  <div class="monitor-row">
+                    <span class="monitor-key">API-Kosten (heute)</span>
+                    <span class="monitor-val">€ 1,24</span>
+                  </div>
+                </div>
+
+                <div class="monitor-card">
+                  <div class="monitor-card-title">Qualitätsmetriken</div>
+                  <div class="monitor-row">
+                    <span class="monitor-key">Positives Feedback</span>
+                    <span class="monitor-val">94%</span>
+                  </div>
+                  <div class="monitor-row">
+                    <span class="monitor-key">FAQ-Trefferquote</span>
+                    <span class="monitor-val">78%</span>
+                  </div>
+                  <div class="monitor-row">
+                    <span class="monitor-key">Fallback-Rate</span>
+                    <span class="monitor-val">3,2%</span>
+                  </div>
+                  <div class="monitor-row">
+                    <span class="monitor-key">Reflexions-Rate</span>
+                    <span class="monitor-val">8,1%</span>
+                  </div>
+                </div>
+
+                <div class="monitor-card">
+                  <div class="monitor-card-title">Nutzungsverteilung (7 Tage)</div>
+                  <div class="monitor-row">
+                    <span class="monitor-key">Geschäftsführung</span>
+                    <span class="monitor-val">38%</span>
+                  </div>
+                  <div class="monitor-row">
+                    <span class="monitor-key">Personalmanagement</span>
+                    <span class="monitor-val">27%</span>
+                  </div>
+                  <div class="monitor-row">
+                    <span class="monitor-key">Führungskraft</span>
+                    <span class="monitor-val">22%</span>
+                  </div>
+                  <div class="monitor-row">
+                    <span class="monitor-key">Sonstige</span>
+                    <span class="monitor-val">13%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ── 4-Schicht-Protokollarchitektur ── -->
+            <p class="admin-section-title" style="margin-top:24px;">Protokollarchitektur (DSGVO-konform)</p>
+
+            <!-- SCHICHT A -->
+            <div class="log-layer">
+              <div class="log-layer-header log-layer-a">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span class="log-layer-title">Schicht A — Aggregierte KPIs</span>
+                  <span class="log-layer-sub">Vollständig anonym · keine DSGVO-Pflichten</span>
+                </div>
+                <span class="log-retention log-ret-forever">∞ Dauerhaft</span>
+              </div>
+              <div class="log-layer-body">
+                <div class="monitor-grid" style="grid-template-columns:repeat(2,1fr);gap:10px;">
+                  <div class="monitor-card">
+                    <div class="monitor-card-title">Feedback nach Antworttyp</div>
+                    <div class="monitor-row"><span class="monitor-key">FAQ-Antworten</span><span class="monitor-val">91 % positiv</span></div>
+                    <div class="monitor-row"><span class="monitor-key">LLM-Antworten</span><span class="monitor-val">76 % positiv</span></div>
+                    <div class="monitor-row"><span class="monitor-key">Reflexion</span><span class="monitor-val">88 % positiv</span></div>
+                    <div class="monitor-row"><span class="monitor-key">Navigation</span><span class="monitor-val">95 % positiv</span></div>
+                  </div>
+                  <div class="monitor-card">
+                    <div class="monitor-card-title">Filterauslösungen (anonym)</div>
+                    <div class="monitor-row"><span class="monitor-key">Input-Filter (7 Tage)</span><span class="monitor-val">11</span></div>
+                    <div class="monitor-row"><span class="monitor-key">Output-Filter (7 Tage)</span><span class="monitor-val">7</span></div>
+                    <div class="monitor-row"><span class="monitor-key">Schwerste Kategorie</span><span class="monitor-val">Prompt-Injection</span></div>
+                    <div class="monitor-row"><span class="monitor-key">Abfangrate</span><span class="monitor-val">100 %</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SCHICHT B -->
+            <div class="log-layer">
+              <div class="log-layer-header log-layer-b">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span class="log-layer-title">Schicht B — Sitzungsprotokoll</span>
+                  <span class="log-layer-sub">Session-Hash · kein Gesprächsinhalt · pseudonymisiert</span>
+                </div>
+                <span class="log-retention log-ret-24h">24 h · Auto-Löschung</span>
+              </div>
+              <div class="log-layer-body">
+                <div class="admin-table-wrap">
+                  <table class="admin-table" aria-label="Sitzungsprotokoll (pseudonymisiert)">
+                    <thead>
+                      <tr>
+                        <th scope="col">Session-ID</th>
+                        <th scope="col">Zeit</th>
+                        <th scope="col">Rolle</th>
+                        <th scope="col">Typ</th>
+                        <th scope="col">Konfidenz</th>
+                        <th scope="col">Feedback</th>
+                        <th scope="col">Filter?</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><code class="log-encrypted">7f3e2a1</code></td>
+                        <td><time datetime="2026-03-20T14:28:00" style="font-size:12px;color:var(--muted);">14:28</time></td>
+                        <td><span class="badge badge-blue">GF</span></td>
+                        <td><span class="badge badge-blue">LLM</span></td>
+                        <td>0,92</td>
+                        <td>👍</td>
+                        <td style="color:var(--muted);">—</td>
+                      </tr>
+                      <tr>
+                        <td><code class="log-encrypted">b8c4d5e</code></td>
+                        <td><time datetime="2026-03-20T14:19:00" style="font-size:12px;color:var(--muted);">14:19</time></td>
+                        <td><span class="badge badge-orange">FK</span></td>
+                        <td><span class="badge badge-green">FAQ</span></td>
+                        <td>0,98</td>
+                        <td>👍</td>
+                        <td style="color:var(--muted);">—</td>
+                      </tr>
+                      <tr>
+                        <td><code class="log-encrypted">9a1f6c3</code></td>
+                        <td><time datetime="2026-03-20T14:07:00" style="font-size:12px;color:var(--muted);">14:07</time></td>
+                        <td><span class="badge badge-grey">SO</span></td>
+                        <td><span class="badge badge-green">FAQ</span></td>
+                        <td>0,99</td>
+                        <td style="color:var(--muted);">—</td>
+                        <td style="color:var(--muted);">—</td>
+                      </tr>
+                      <tr>
+                        <td><code class="log-encrypted">4e2b8a7</code></td>
+                        <td><time datetime="2026-03-20T13:52:00" style="font-size:12px;color:var(--muted);">13:52</time></td>
+                        <td><span class="badge badge-green">PM</span></td>
+                        <td><span class="badge badge-red">Filter</span></td>
+                        <td>—</td>
+                        <td style="color:var(--muted);">—</td>
+                        <td><span class="badge badge-red">Input</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p style="font-size:11px;color:var(--muted);margin-top:6px;">Anfrageinhalte werden nicht gespeichert. Automatische Löschung täglich um 00:00 Uhr (DSGVO Art. 5 Abs. 1 lit. e).</p>
+              </div>
+            </div>
+
+            <!-- SCHICHT C -->
+            <div class="log-layer">
+              <div class="log-layer-header log-layer-c">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span class="log-layer-title">Schicht C — Inhaltsprotokoll<span class="log-optional-badge">Optional</span></span>
+                  <span class="log-layer-sub">Aktivierbar · erfordert Datenschutzhinweis-Ergänzung im Widget</span>
+                </div>
+                <span class="log-retention log-ret-72h">72 h · Auto-Löschung</span>
+              </div>
+              <div class="log-layer-body">
+                <div class="log-notice" role="note">
+                  <span aria-hidden="true">⚠</span>
+                  <span>Nur aktiv wenn der Chatbot-Eröffnungstext ergänzt wurde: <em>„Zur Qualitätssicherung werden Gesprächsinhalte pseudonymisiert bis zu 72 Stunden gespeichert."</em> — Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO. Zugriff ausschließlich für benannte Qualitätsprüferinnen/Qualitätsprüfer.</span>
+                </div>
+                <div class="admin-table-wrap">
+                  <table class="admin-table" aria-label="Inhaltsprotokoll (pseudonymisiert, optional)">
+                    <thead>
+                      <tr>
+                        <th scope="col">Session-ID</th>
+                        <th scope="col">Zeit</th>
+                        <th scope="col">Rolle</th>
+                        <th scope="col">Frage (Auszug, max. 150 Z.)</th>
+                        <th scope="col">Antwort (Auszug, max. 150 Z.)</th>
+                        <th scope="col">Feedback</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><code class="log-encrypted">7f3e2a1</code></td>
+                        <td><time datetime="2026-03-20T14:28:00" style="font-size:12px;color:var(--muted);">14:28</time></td>
+                        <td><span class="badge badge-blue">GF</span></td>
+                        <td style="font-size:12px;">Wie entwickle ich eine KI-Strategie für mein KMU?</td>
+                        <td style="font-size:12px;">Eine KI-Strategie beginnt mit einer Bestandsaufnahme bestehender Prozesse…</td>
+                        <td>👍</td>
+                      </tr>
+                      <tr>
+                        <td><code class="log-encrypted">b8c4d5e</code></td>
+                        <td><time datetime="2026-03-20T14:19:00" style="font-size:12px;color:var(--muted);">14:19</time></td>
+                        <td><span class="badge badge-orange">FK</span></td>
+                        <td style="font-size:12px;">Welche Lernreisen gibt es zur Digitalisierung?</td>
+                        <td style="font-size:12px;">Die Plattform bietet strukturierte Lernpfade zu fünf Transformationsthemen…</td>
+                        <td>👍</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p style="font-size:11px;color:var(--muted);margin-top:6px;">Automatische Löschung nach 72 h. Kein Export, keine Weitergabe. Zugriff wird protokolliert.</p>
+              </div>
+            </div>
+
+            <!-- SCHICHT D -->
+            <div class="log-layer">
+              <div class="log-layer-header log-layer-d">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span class="log-layer-title">Schicht D — Sicherheitsprotokoll</span>
+                  <span class="log-layer-sub">Filterauslösungen · AES-256 verschlüsselt · PII vorher bereinigt</span>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                  <span class="log-access">🔒 Admin + DSB</span>
+                  <span class="log-retention log-ret-90d">90 Tage</span>
+                </div>
+              </div>
+              <div class="log-layer-body">
+                <div class="admin-table-wrap">
+                  <table class="admin-table" aria-label="Sicherheitsprotokoll (Filterauslösungen, verschlüsselt)">
+                    <thead>
+                      <tr>
+                        <th scope="col">Session-ID</th>
+                        <th scope="col">Zeitstempel</th>
+                        <th scope="col">Filter</th>
+                        <th scope="col">Kategorie</th>
+                        <th scope="col">Schweregrad</th>
+                        <th scope="col">Inhalt</th>
+                        <th scope="col">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><code class="log-encrypted">4e2b8a7</code></td>
+                        <td><time datetime="2026-03-20T13:52:00" style="font-size:12px;color:var(--muted);">20.03. 13:52</time></td>
+                        <td><span class="badge badge-red">Input</span></td>
+                        <td style="font-size:12.5px;">Prompt-Injection</td>
+                        <td><span class="badge badge-red">Hoch</span></td>
+                        <td><code class="log-encrypted">[AES-256 · Admin+DSB]</code></td>
+                        <td><span class="badge badge-green">Abgefangen</span></td>
+                      </tr>
+                      <tr>
+                        <td><code class="log-encrypted">3c7a1b4</code></td>
+                        <td><time datetime="2026-03-20T09:08:00" style="font-size:12px;color:var(--muted);">20.03. 09:08</time></td>
+                        <td><span class="badge badge-orange">Output</span></td>
+                        <td style="font-size:12.5px;">Thematische Abweichung</td>
+                        <td><span class="badge badge-orange">Mittel</span></td>
+                        <td><code class="log-encrypted">[AES-256 · Admin+DSB]</code></td>
+                        <td><span class="badge badge-green">Abgefangen</span></td>
+                      </tr>
+                      <tr>
+                        <td><code class="log-encrypted">e5d9f2a</code></td>
+                        <td><time datetime="2026-03-19T16:11:00" style="font-size:12px;color:var(--muted);">19.03. 16:11</time></td>
+                        <td><span class="badge badge-orange">Output</span></td>
+                        <td style="font-size:12.5px;">PII-Verdacht (Name)</td>
+                        <td><span class="badge badge-orange">Mittel</span></td>
+                        <td><code class="log-encrypted">[AES-256 · Admin+DSB]</code></td>
+                        <td><span class="badge badge-green">Anonymisiert</span></td>
+                      </tr>
+                      <tr>
+                        <td><code class="log-encrypted">a1c8e3f</code></td>
+                        <td><time datetime="2026-03-18T09:33:00" style="font-size:12px;color:var(--muted);">18.03. 09:33</time></td>
+                        <td><span class="badge badge-red">Input</span></td>
+                        <td style="font-size:12.5px;">Hate Speech</td>
+                        <td><span class="badge badge-red">Hoch</span></td>
+                        <td><code class="log-encrypted">[AES-256 · Admin+DSB]</code></td>
+                        <td><span class="badge badge-green">Abgefangen</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p style="font-size:11px;color:var(--muted);margin-top:6px;">Inhalte werden vor Speicherung PII-bereinigt und AES-256-verschlüsselt. Entschlüsselung nur durch Admin + Datenschutzbeauftragte/r. Löschung nach 90 Tagen. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.</p>
+              </div>
+            </div>
+
+          </div><!-- /.admin-content -->
+        </div><!-- /.admin-wrap -->
+      </section>
+
+    </main><!-- /#main-content -->
+  </div><!-- /.demo-layout -->
+
+  <!-- FAB floating button (always visible on demo) -->
+  <button
+    class="fab-demo"
+    aria-label="Transform-Assistent öffnen"
+    onclick="showTab('welcome')"
+    title="Widget öffnen"
+  >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+    </svg>
+  </button>
+
+  <!-- ============================================================
+       JAVASCRIPT
+  ============================================================ -->
+  <script>
+    'use strict';
+
+    /* ---- Suggestions data ---- */
+    const suggestions = {
+      gf: [
+        'Wie entwickle ich eine KI-Strategie für mein KMU?',
+        'Welche Förderprogramme gibt es für die Transformation?',
+        'Zeig mir den Selbstcheck für mein Unternehmen.'
+      ],
+      pm: [
+        'Wie qualifiziere ich meine Mitarbeitenden für KI?',
+        'Was bedeutet New Work für Personalmanagement?',
+        'Welche Kompetenzen braucht mein Team in Zukunft?'
+      ],
+      fk: [
+        'Wie führe ich mein Team durch den Wandel?',
+        'Was sind typische Widerstände bei der Digitalisierung?',
+        'Wie gestalte ich agile Meetings effektiv?'
+      ],
+      so: [
+        'Was ist der Stand der Transformation in der Automobilbranche?',
+        'Welche Technologien prägen die Zukunft der KMU?',
+        'Wie finde ich passende Fördermittel für mein Projekt?'
+      ]
+    };
+
+    /* ---- showTab ---- */
+    function showTab(name) {
+      const panels = document.querySelectorAll('[role="tabpanel"]');
+      const tabs = document.querySelectorAll('[role="tab"]');
+
+      panels.forEach(function(panel) {
+        panel.classList.remove('active');
+      });
+
+      tabs.forEach(function(tab) {
+        tab.setAttribute('aria-selected', 'false');
+      });
+
+      const targetPanel = document.getElementById('panel-' + name);
+      const targetTab = document.getElementById('tab-' + name);
+
+      if (targetPanel) {
+        targetPanel.classList.add('active');
+      }
+      if (targetTab) {
+        targetTab.setAttribute('aria-selected', 'true');
+      }
+    }
+
+    /* ---- selectRole ---- */
+    function selectRole(btn, role) {
+      const steps = document.querySelectorAll('.role-step');
+      steps.forEach(function(s) {
+        s.classList.remove('selected');
+        s.setAttribute('aria-pressed', 'false');
+      });
+
+      btn.classList.add('selected');
+      btn.setAttribute('aria-pressed', 'true');
+
+      updateSuggestions(role);
+    }
+
+    /* ---- updateSuggestions ---- */
+    function updateSuggestions(role) {
+      const list = document.getElementById('suggestions-list');
+      if (!list) return;
+
+      const items = suggestions[role] || suggestions['gf'];
+      list.innerHTML = '';
+
+      items.forEach(function(text) {
+        const button = document.createElement('button');
+        button.className = 'sugg-btn';
+        button.setAttribute('aria-label', 'Frage stellen: ' + text);
+        button.innerHTML =
+          '<span>' + escapeHtml(text) + '</span>' +
+          '<span class="sugg-arrow" aria-hidden="true">\u2192</span>';
+        button.addEventListener('click', function() { startChat(); });
+        list.appendChild(button);
+      });
+    }
+
+    /* ---- escapeHtml ---- */
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    /* ---- toggleSources ---- */
+    function toggleSources(btn) {
+      if (!btn) return;
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      const panelId = btn.getAttribute('aria-controls');
+      const panel = panelId ? document.getElementById(panelId) : null;
+
+      btn.setAttribute('aria-expanded', String(!expanded));
+
+      if (panel) {
+        if (expanded) {
+          panel.classList.remove('open');
+        } else {
+          panel.classList.add('open');
+        }
+      }
+    }
+
+    /* ---- toggleFeedback ---- */
+    function toggleFeedback(btn, type) {
+      const pressed = btn.getAttribute('aria-pressed') === 'true';
+      btn.setAttribute('aria-pressed', String(!pressed));
+
+      if (!pressed) {
+        btn.style.background = 'var(--navy)';
+        btn.style.borderColor = 'var(--navy)';
+        const paths = btn.querySelectorAll('path, polyline');
+        paths.forEach(function(p) { p.setAttribute('stroke', 'white'); });
+      } else {
+        btn.style.background = '';
+        btn.style.borderColor = '';
+        const paths = btn.querySelectorAll('path, polyline');
+        paths.forEach(function(p) { p.setAttribute('stroke', 'var(--navy)'); });
+      }
+    }
+
+    /* ---- autoResize ---- */
+    function autoResize(textarea) {
+      if (!textarea) return;
+      textarea.style.height = 'auto';
+      textarea.style.height = textarea.scrollHeight + 'px';
+    }
+
+    /* ---- updateCounter ---- */
+    function updateCounter(input, counterId, max) {
+      const counter = document.getElementById(counterId);
+      if (!counter) return;
+      const len = input.value.length;
+      counter.textContent = len + ' / ' + max;
+
+      if (len > max * 0.9) {
+        counter.style.color = '#e65100';
+      } else {
+        counter.style.color = '';
+      }
+    }
+
+    /* ---- handleKey ---- */
+    function handleKey(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        startChat();
+      }
+    }
+
+    /* ---- startChat ---- */
+    function startChat() {
+      showTab('chat');
+    }
+
+    /* ---- showAdminSection ---- */
+    function showAdminSection(id) {
+      const sections = document.querySelectorAll('.admin-section');
+      const navBtns = document.querySelectorAll('.admin-nav-btn');
+
+      sections.forEach(function(s) { s.classList.remove('active'); });
+      navBtns.forEach(function(b) { b.classList.remove('active'); });
+
+      const targetSection = document.getElementById('asec-' + id);
+      const targetNav = document.getElementById('anav-' + id);
+
+      if (targetSection) { targetSection.classList.add('active'); }
+      if (targetNav) { targetNav.classList.add('active'); }
+    }
+
+    /* ---- Keyboard navigation for tabs ---- */
+    document.addEventListener('DOMContentLoaded', function() {
+      const tabList = document.querySelector('[role="tablist"]');
+      if (!tabList) return;
+
+      tabList.addEventListener('keydown', function(e) {
+        const tabs = Array.from(tabList.querySelectorAll('[role="tab"]'));
+        const currentIndex = tabs.findIndex(function(t) {
+          return t.getAttribute('aria-selected') === 'true';
+        });
+
+        let nextIndex = currentIndex;
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          nextIndex = (currentIndex + 1) % tabs.length;
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+        } else if (e.key === 'Home') {
+          e.preventDefault();
+          nextIndex = 0;
+        } else if (e.key === 'End') {
+          e.preventDefault();
+          nextIndex = tabs.length - 1;
+        } else {
+          return;
+        }
+
+        tabs[nextIndex].focus();
+        tabs[nextIndex].click();
+      });
+    });
+  </script>
+
+</body>
+</html>
