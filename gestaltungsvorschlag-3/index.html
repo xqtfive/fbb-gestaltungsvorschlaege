@@ -95,22 +95,22 @@
       height: 56px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 16px;
       padding: 0 24px;
       position: sticky;
       top: 0;
       z-index: 100;
     }
 
-    .demo-header-left {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
     .demo-header-logo {
       display: flex;
       align-items: center;
+    }
+
+    .demo-header-logo a {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
     }
 
     .demo-divider {
@@ -123,30 +123,6 @@
       font-size: 13px;
       font-weight: 600;
       color: var(--navy-deep);
-      letter-spacing: 0.02em;
-      text-transform: uppercase;
-    }
-
-    .demo-badge {
-      background: var(--orange);
-      color: #ffffff;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: var(--radius-sm);
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-
-    .demo-header-right {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .demo-meta {
-      font-size: 12px;
-      color: var(--muted);
     }
 
     .demo-client-badge {
@@ -1525,22 +1501,13 @@
        DEMO HEADER
   ============================================================ -->
   <header class="demo-header" aria-label="Demo-Navigation">
-    <div class="demo-header-left">
-      <div class="demo-header-logo">
-        <img
-          src="https://jetzt-transformieren.de/assets/img/logo_transform-by.svg"
-          alt="transform.by"
-          height="28"
-        >
-      </div>
-      <div class="demo-divider" aria-hidden="true"></div>
-      <span class="demo-title">Chatbot-Widget</span>
-      <span class="demo-badge" aria-label="Version 7">v7</span>
+    <div class="demo-header-logo">
+      <a href="../" aria-label="Zurück zur Übersicht">
+        <img src="https://jetzt-transformieren.de/assets/img/logo_transform-by.svg" alt="transform.by" height="28">
+      </a>
     </div>
-    <div class="demo-header-right">
-      <span class="demo-meta">Gestaltungsvorschlag 3 – Kante</span>
-      <span class="demo-client-badge">f-bb gGmbH</span>
-    </div>
+    <div class="demo-divider" aria-hidden="true"></div>
+    <span class="demo-title">Chatbot-Widget</span>
   </header>
 
   <!-- ============================================================

@@ -34,37 +34,28 @@
 
     /* ── Header ── */
     header {
-      background: var(--navy-deep);
-      padding: 14px 32px;
+      background: #ffffff;
+      border-bottom: 2px solid var(--orange);
+      padding: 0 32px;
+      height: 56px;
       display: flex;
       align-items: center;
       gap: 10px;
     }
-    .header-dot {
-      width: 28px;
-      height: 28px;
-      background: var(--orange);
-      border-radius: 6px;
-      flex-shrink: 0;
-    }
-    .header-wordmark {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--white);
-      letter-spacing: -.2px;
-    }
-    .header-sep { width: 1px; height: 18px; background: rgba(255,255,255,.15); margin: 0 6px; }
-    .header-sub { font-size: 12.5px; color: rgba(255,255,255,.5); }
+    .header-logo { display: flex; align-items: center; }
+    .header-logo img { height: 28px; display: block; }
+    .header-sep { width: 1px; height: 24px; background: var(--border); margin: 0 12px; }
+    .header-sub { font-size: 12.5px; color: var(--muted); font-weight: 500; }
     .header-badge {
       margin-left: auto;
-      background: rgba(255,102,0,.15);
-      border: 1px solid rgba(255,102,0,.3);
-      color: #ffb380;
+      background: var(--orange);
+      color: #ffffff;
       font-size: 11px;
-      font-weight: 600;
+      font-weight: 700;
       padding: 3px 10px;
-      border-radius: 9999px;
+      border-radius: 6px;
       letter-spacing: .3px;
+      text-transform: uppercase;
     }
 
     /* ── Main ── */
@@ -184,11 +175,11 @@
 <body>
 
   <header>
-    <div class="header-dot"></div>
-    <span class="header-wordmark">jetzt-transformieren.de</span>
+    <div class="header-logo">
+      <img src="https://jetzt-transformieren.de/assets/img/logo_transform-by.svg" alt="transform.by" height="28">
+    </div>
     <div class="header-sep"></div>
-    <span class="header-sub">Chat-Widget · Ausschreibung f-bb gGmbH</span>
-    <span class="header-badge">Entwurf</span>
+    <span class="header-sub">Chatbot-Widget</span>
   </header>
 
   <main>

@@ -131,38 +131,21 @@
        DEMO SHELL
     ================================================================ */
     .demo-header {
-      background: var(--navy-deep);
-      padding: 14px 32px;
+      background: #ffffff;
+      border-bottom: 2px solid #ff6600;
+      padding: 0 32px;
+      height: 56px;
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: 16px;
       position: sticky;
       top: 0;
       z-index: 200;
-      box-shadow: 0 2px 12px rgba(0,0,0,.25);
     }
-    .demo-wordmark {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--white);
-      letter-spacing: -.3px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .demo-sep { width: 1px; height: 20px; background: rgba(255,255,255,.15); }
-    .demo-sub { font-size: 13px; color: rgba(255,255,255,.55); }
-    .demo-badge {
-      margin-left: auto;
-      background: rgba(255,102,0,.15);
-      border: 1px solid rgba(255,102,0,.35);
-      color: #ffb380;
-      font-size: 11.5px;
-      font-weight: 600;
-      padding: 4px 12px;
-      border-radius: var(--r-full);
-      letter-spacing: .3px;
-    }
+    .demo-wordmark { display: flex; align-items: center; }
+    .demo-wordmark a { display: flex; align-items: center; text-decoration: none; }
+    .demo-sep { width: 1px; height: 24px; background: #d0dce8; }
+    .demo-sub { font-size: 13px; font-weight: 600; color: #0f2536; }
 
     /* ── Tab nav: underline style (v6 "Klar") ── */
     .tab-nav {
@@ -1360,14 +1343,12 @@
   <!-- ══ DEMO HEADER ══════════════════════════════════════════════ -->
   <header class="demo-header" role="banner">
     <div class="demo-wordmark">
-      <img src="https://jetzt-transformieren.de/assets/img/logo_transform-by.svg"
-           alt="transform.by – jetzt-transformieren.de"
-           height="28"
-           style="filter: brightness(0) invert(1); display: block;">
+      <a href="../" aria-label="Zurück zur Übersicht">
+        <img src="https://jetzt-transformieren.de/assets/img/logo_transform-by.svg" alt="transform.by" height="28">
+      </a>
     </div>
     <div class="demo-sep" aria-hidden="true"></div>
-    <span class="demo-sub">Chat-Widget · Gestaltungsvorschlag</span>
-    <span class="demo-badge">v6</span>
+    <span class="demo-sub">Chatbot-Widget</span>
   </header>
 
   <!-- ══ TAB NAVIGATION ═══════════════════════════════════════════
